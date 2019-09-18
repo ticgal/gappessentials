@@ -337,6 +337,9 @@ class PluginGappEssentialsApirest extends API {
 			case 'documentsTicket':
 				return $this->returnResponse($this->documentsTicket($this->parameters));
 			break;
+			case 'basicInfo':
+				return $this->returnResponse($this->basicInfo($this->parameters));
+			break;
 			default:
 				$this->messageLostError();
 			break;
@@ -447,6 +450,34 @@ class PluginGappEssentialsApirest extends API {
 		}
 
 		return array_values($found);
+	}
+
+	protected function basicInfo($params=[]){
+		global $DB;
+
+		$this->initEndpoint();
+		$info=[];
+		$info['documenttype']=[];
+
+		$info['max_size']=Toolbox::return_bytes_from_ini_vars(ini_get("upload_max_filesize"));
+		
+		$sql=[
+			'SELECT'=>[
+				'name',
+				'ext',
+				'mime'
+			],
+			'FROM'=>'glpi_documenttypes',
+			'WHERE'=>[
+				'is_uploadable'=>1
+			]
+		];
+		$iterator=$DB->request($sql);
+		while ($data = $iterator->next()) {
+			$info['documenttype'][] = $data;
+		}
+		
+		return $info;
 	}
 
 }
