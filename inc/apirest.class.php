@@ -477,21 +477,6 @@ class PluginGappEssentialsApirest extends API {
 			$info['documenttype'][] = $data;
 		}
 
-		$query=[
-			'SELECT'=>[
-				'id',
-				'completename',
-				'is_incident',
-				'is_request'
-			],
-			'FROM'=>'glpi_itilcategories',
-		];
-		if ($result = $DB->request($query)) {
-			while ($data = $DB->next($result)) {
-				$info['itilcategories'][] = $data;
-			}
-		}
-
 		$item = new ITILCategory();
 		$query=[
 			'SELECT'=>[
@@ -504,7 +489,7 @@ class PluginGappEssentialsApirest extends API {
 			'WHERE'=>getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
 		];
 		if ($result = $DB->request($query)) {
-			while ($data = $DB->next($result)) {
+			while ($data = $result->next()) {
 				$info['itilcategories'][] = $data;
 			}
 		}
@@ -519,7 +504,7 @@ class PluginGappEssentialsApirest extends API {
 			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
 		];
 		if ($result = $DB->request($query)) {
-			while ($data = $DB->next($result)) {
+			while ($data = $result->next()) {
 				$info['locations'][] = $data;
 			}
 		}
