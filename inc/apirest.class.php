@@ -433,6 +433,10 @@ class PluginGappEssentialsApirest extends API {
 			]
 		]);
 		while ($data = $doc_iterator->next()) {
+			$document=new Document();
+			$document->getFromDB($data['id']);
+			$file = GLPI_DOC_DIR."/".$document->fields['filepath'];
+			$data['filesize']  = filesize($file);
 			$fields[] = $data;
 		}
 
