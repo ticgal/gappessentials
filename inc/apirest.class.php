@@ -340,6 +340,12 @@ class PluginGappEssentialsApirest extends API {
 			case 'basicInfo':
 				return $this->returnResponse($this->basicInfo($this->parameters));
 			break;
+			case 'itilCategory':
+				return $this->returnResponse($this->itilCategory($this->parameters));
+			break;
+			case 'location':
+				return $this->returnResponse($this->location($this->parameters));
+			break;
 			default:
 				$this->messageLostError();
 			break;
@@ -477,6 +483,64 @@ class PluginGappEssentialsApirest extends API {
 			$info['documenttype'][] = $data;
 		}
 		
+		return $info;
+	}
+
+	protected function itilCategory($params=[]){
+		global $DB;
+
+		$this->initEndpoint();
+		$info=[];
+		$item = new ITILCategory();
+
+		$query=[
+			'SELECT'=>[
+				'id',
+				'completename',
+				'is_incident',
+				'is_request',
+				'level',
+				'itilcategories_id'
+			],
+			'FROM'=>'glpi_itilcategories',
+			'WHERE'=>getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+		];
+		if (isset($params['is_incident'])) {
+			$query['WHERE']['is_incident']=$params['is_incident'];
+		}
+		if (isset($params['is_request'])) {
+			$query['WHERE']['is_request']=$params['is_request'];
+		}
+		if ($result = $DB->request($query)) {
+			while ($data = $result->next()) {
+				$info[] = $data;
+			}
+		}
+		return $info;
+	}
+
+	protected function location($params=[]){
+		global $DB;
+
+		$this->initEndpoint();
+		$info=[];
+		$item = new Location();
+		$query=[
+			'SELECT'=>[
+				'id',
+				'completename',
+				'level',
+				'locations_id'
+			],
+			'FROM'=>'glpi_locations',
+			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+		];
+		if ($result = $DB->request($query)) {
+			while ($data = $result->next()) {
+				$info[] = $data;
+			}
+		}
+
 		return $info;
 	}
 
