@@ -343,6 +343,9 @@ class PluginGappEssentialsApirest extends API {
 			case 'itilCategory':
 				return $this->returnResponse($this->itilCategory($this->parameters));
 			break;
+			case 'location':
+				return $this->returnResponse($this->location($this->parameters));
+			break;
 			default:
 				$this->messageLostError();
 			break;
@@ -483,21 +486,6 @@ class PluginGappEssentialsApirest extends API {
 		while ($data = $iterator->next()) {
 			$info['documenttype'][] = $data;
 		}
-
-		$item = new Location();
-		$query=[
-			'SELECT'=>[
-				'id',
-				'completename',
-			],
-			'FROM'=>'glpi_locations',
-			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
-		];
-		if ($result = $DB->request($query)) {
-			while ($data = $result->next()) {
-				$info['locations'][] = $data;
-			}
-		}
 		
 		return $info;
 	}
@@ -532,6 +520,32 @@ class PluginGappEssentialsApirest extends API {
 				$info[] = $data;
 			}
 		}
+		return $info;
+	}
+
+	protected function location($params=[]){
+		global $DB;
+
+		$this->initEndpoint();
+		$info=[];
+		$item = new Location();
+		$query=[
+			'SELECT'=>[
+				'id',
+				'completename',
+				'level',
+				'locations_id'
+			],
+			'FROM'=>'glpi_locations',
+			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+		];
+		if ($result = $DB->request($query)) {
+			while ($data = $result->next()) {
+				$info[] = $data;
+			}
+		}
+
+		return $info;
 	}
 
 }
