@@ -9,7 +9,12 @@
         </short>
         <long>
             <en>Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app. 
-            Currently enables access to ticket documents and the plugins list to Self-service users. 
+            Currently enables:
+                -access to ticket documents
+                -plugins list to Self-service users
+                -Max. uploadable file size 
+                -Allowed filetypes
+                -Download file size
             No aditional configuration is needed.</en>
         </long>
     </description>
@@ -22,7 +27,7 @@
     </authors>
     <versions>
         <version>
-            <num>1.0.0</num>
+            <num>1.1.0</num>
             <compatibility>9.4</compatibility>
         </version>
     </versions>
