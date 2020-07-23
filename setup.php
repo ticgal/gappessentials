@@ -28,8 +28,8 @@
 
 define('PLUGIN_GAPPESSENTIALS_VERSION', '1.1.0');
 // Minimal GLPI version, inclusive
-define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.4.0");
-define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "9.5");
+define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.5.0");
+define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "9.6.0");
 
 /**
  * Init hooks of the plugin.
