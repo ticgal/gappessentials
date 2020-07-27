@@ -72,7 +72,11 @@ function plugin_version_gappessentials() {
  * @return boolean
  */
 function plugin_gappessentials_check_prerequisites() {
-   return true;
+   $path=substr(Plugin::getPhpDir('gappessentials',false),1,(strpos(Plugin::getPhpDir('gappessentials',false),"/",1)-1));
+   if($path=="marketplace"){
+      return true;
+   }
+   return false;
 }
 
 /**
