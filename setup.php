@@ -26,10 +26,10 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_GAPPESSENTIALS_VERSION', '1.1.0');
+define('PLUGIN_GAPPESSENTIALS_VERSION', '1.2.0');
 // Minimal GLPI version, inclusive
-define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.4.0");
-define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "9.5");
+define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.5.0");
+define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "9.6.0");
 
 /**
  * Init hooks of the plugin.
@@ -72,7 +72,11 @@ function plugin_version_gappessentials() {
  * @return boolean
  */
 function plugin_gappessentials_check_prerequisites() {
-   return true;
+   $path=substr(Plugin::getPhpDir('gappessentials',false),1,(strpos(Plugin::getPhpDir('gappessentials',false),"/",1)-1));
+   if($path=="marketplace"){
+      return true;
+   }
+   return false;
 }
 
 /**

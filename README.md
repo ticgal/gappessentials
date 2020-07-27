@@ -5,6 +5,8 @@
 [![Twitter](https://img.shields.io/badge/Twitter-TICgal-blue.svg?style=flat-square)](https://twitter.com/ticgalcom)
 [![Web](https://img.shields.io/badge/Web-TICgal-blue.svg?style=flat-square)](https://tic.gal/)
 
+**Please report Gapp (Mobile GLPI app) related issues at: https://github.com/ticgal/gapp**
+
 Gapp Essentials is a companion plugin to enhance Gapp features.
 Gapp benefits from using Gapp Essentials by:
 * Giving access to documents to self-service users
