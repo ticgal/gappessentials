@@ -11,6 +11,7 @@ Gapp Essentials is a companion plugin to enhance Gapp features.
 Gapp benefits from using Gapp Essentials by:
 * Giving access to documents to self-service users
 * List GLPI plugins
+* Upload size limit
 
 ## Contributing
 
