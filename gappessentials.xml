@@ -31,7 +31,6 @@
             <compatibility>~9.5.0</compatibility>
       	    <download_url>https://github.com/ticgal/gappessentials/releases/download/1.2.0/glpi-gappessentials-1.2.0.tar.tgz</download_url>
         </version>
-    <versions>
         <version>
             <num>1.1.0</num>
             <compatibility>9.4</compatibility>
