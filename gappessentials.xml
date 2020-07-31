@@ -1,6 +1,6 @@
 <root>
     <name>Gapp Essentials</name>
-    <key>GappEssentials</key>
+    <key>gappessentials</key>
     <state>stable</state> <!-- stable | unstable | beta | alpha -->
     <logo>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png</logo>
     <description>
