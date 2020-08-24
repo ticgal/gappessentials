@@ -406,24 +406,18 @@ class PluginGappEssentialsApirest extends API {
 			'SELECT'    => [
 				'glpi_documents.id',
 				'glpi_documents.name',
-				'glpi_documents.date_mod',
-				'glpi_documents.users_id',
+				'glpi_documents_items.date_mod',
+				'glpi_documents_items.users_id',
 				'glpi_documents.link',
 				'glpi_documents.filename',
 				'glpi_documents.mime'
 			],
 			'FROM'      => 'glpi_documents_items',
-			'LEFT JOIN' => [
+			'INNER JOIN' => [
 				'glpi_documents'           => [
 					'ON' => [
 						'glpi_documents_items'  => 'documents_id',
 						'glpi_documents'        => 'id'
-					]
-				],
-				'glpi_documentcategories'  => [
-					'ON' => [
-						'glpi_documents'           => 'documentcategories_id',
-						'glpi_documentcategories'  => 'id'
 					]
 				]
 			],
