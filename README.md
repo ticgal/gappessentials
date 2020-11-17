@@ -13,6 +13,8 @@ Gapp benefits from using Gapp Essentials by:
 * List GLPI plugins
 * Upload size limit
 
+**Note: Since GLPI 9.5, Gapp Essentials will only support installation using the new Plugin Marketplace**
+
 ## Contributing
 
 * Open a ticket for each bug/feature so it can be discussed
