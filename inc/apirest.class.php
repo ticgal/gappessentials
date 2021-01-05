@@ -448,7 +448,7 @@ class PluginGappEssentialsApirest extends API {
 		// build query
 		$query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT `$table`.id,  `$table`.* FROM `$table`";
 		if ($result = $DB->query($query)) {
-			while ($data = $DB->fetch_assoc($result)) {
+			while ($data = $DB->fetchAssoc($result)) {
 				$found[] = $data;
 			}
 		}
