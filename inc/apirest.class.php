@@ -26,7 +26,7 @@
  --------------------------------------------------------------------------
 */
 
-class PluginGappEssentialsApirest extends API {
+class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected $request_uri;
 	protected $url_elements;
 	protected $verb;
