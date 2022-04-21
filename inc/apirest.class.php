@@ -49,6 +49,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+
 	public function parseIncomingParams($is_inline_doc = false) {
 
 		$parameters = [];
@@ -179,6 +180,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return "";
 	}
 
+
 	private function initEndpoint($unlock_session = true, $endpoint = "") {
 
 		if ($endpoint === "") {
@@ -192,6 +194,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			self::unlockSessionIfPossible();
 		}
 	}
+
 
 	/**
 	* Check if the app_toke in case of config ask to
@@ -212,6 +215,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			}
 		}
 	}
+
 
 	/**
 	* Log usage of the api into glpi historical or log files (defined by api config)
@@ -249,6 +253,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+
 	/**
 	* Unlock the current session (readonly) to permit concurrent call
 	*
@@ -280,14 +285,16 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return $id;
 	}
 
-	private function pluginActivated(){
+
+	private function pluginActivated($name='gappextended'){
 
 		$plugin=new Plugin();
 
-		if (!$plugin->isActivated('gappessentials')) {
+		if (!$plugin->isActivated($name)) {
 			$this->returnError("Plugin disabled", 400, "ERROR_PLUGIN_DISABLED");
 		}
 	}
+
 
 	public function call() {
 
@@ -346,12 +353,190 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			case 'location':
 				return $this->returnResponse($this->location($this->parameters));
 			break;
+			case 'userPhoto':
+				return $this->returnResponse($this->userPhoto($this->parameters));
+			break;
+			case 'usersPhotos':
+				return $this->returnResponse($this->usersPhotos($this->parameters));
+			break;
+			case 'defaultConfig':
+				return $this->returnResponse($this->defaultConfig($this->parameters));
+			break;
+			case 'saveToken':
+				return $this->returnResponse($this->saveToken($this->parameters));
+			break;
+			case 'getHistory':
+				return $this->returnResponse($this->getHistory($this->parameters));
+			break;
+			case 'getBehaviors':
+				return $this->returnResponse($this->getBehaviors($this->parameters));
+			break;
+			case 'initOauth':
+				return $this->returnResponse($this->initOauth($this->parameters));
+			break;
+			case 'firebaseOauth':
+				return $this->returnResponse($this->firebaseOauth($this->parameters));
+			break;
+			case 'googleUserPhoto':
+				return $this->returnResponse($this->googleUserPhoto($this->parameters));
+			break;
+			case 'planningTask':
+				return $this->returnResponse($this->planningTask($this->parameters));
+			break;
+			case 'saveSignature':
+				return $this->returnResponse($this->saveSignature($this->parameters),201);
+			break;
+			case 'notSignature':
+				return $this->returnResponse($this->notSignature($this->parameters),201);
+			break;
+			case 'techList':
+				return $this->returnResponse($this->techList($this->parameters));
+			break;
+			case 'myDevices':
+				return $this->returnResponse($this->myDevices($this->parameters));
+			break;
+			case 'saveImage':
+				return $this->returnResponse($this->saveImage($this->parameters));
+			break;
+			case 'ticketRedirect':
+				return $this->returnResponse($this->ticketRedirect($this->parameters));
+			break;
+			case 'forceEndTimer':
+				return $this->returnResponse($this->forceEndTimer($this->parameters));
+			break;
+			case 'blockEndTimer':
+				return $this->returnResponse($this->blockEndTimer($this->parameters));
+			break;
+			case 'pluginStatus':
+				return $this->returnResponse($this->pluginStatus($this->parameters));
+			break;
 			default:
-				$this->messageLostError();
+				$path=str_replace($resource."/", "", trim($path_info, '/'));
+				$this->url_elements = explode('/', $path);
+				$function=trim(strval($this->url_elements[0]));
+				switch ($resource) {
+					case 'tam':
+						$this->pluginActivated($resource);
+						switch ($function) {
+							case 'initTam':
+								return $this->returnResponse($this->initTam($this->parameters));
+							break;
+							case 'endTam':
+								return $this->returnResponse($this->endTam($this->parameters));
+							break;
+							case 'checkWorking':
+								return $this->returnResponse($this->checkWorking($this->parameters));
+							break;
+							case 'getTamList':
+								return $this->returnResponse($this->getTamList($this->parameters));
+							default:
+								$this->messageLostError();
+							break;
+						}
+						break;
+					case 'actualtime':
+						$this->pluginActivated($resource);
+						switch ($function) {
+							case 'startTimer':
+								return $this->returnResponse($this->startTimer($this->parameters));
+							break;
+							case 'pauseTimer':
+								return $this->returnResponse($this->pauseTimer($this->parameters));
+							break;
+							case 'stopTimer':
+								return $this->returnResponse($this->stopTimer($this->parameters));
+							break;
+							case 'statsTimer':
+								return $this->returnResponse($this->statsTimer($this->parameters));
+							break;
+							case 'timerStatus':
+								return $this->returnResponse($this->timerStatus($this->parameters));
+							break;
+							case 'assetTasksTimer':
+								return $this->returnResponse($this->assetTasksTimer($this->parameters));
+							break;
+							default:
+								$this->messageLostError();
+							break;
+						}
+						break;
+					case 'credit':
+						$this->pluginActivated($resource);
+						switch ($function) {
+							case 'creditList':
+								return $this->returnResponse($this->creditList($this->parameters));
+								break;
+							default:
+								$this->messageLostError();
+								break;
+						}
+					break;
+					case 'fusioninventory':
+						$this->pluginActivated($resource);
+						switch ($function) {
+							case 'glpiAgentConfig':
+								return $this->returnResponse($this->glpiAgentConfig($this->parameters));
+								break;
+							
+							default:
+								$this->messageLostError();
+								break;
+						}
+					break;
+					case '02005':
+						switch ($function) {
+							case 'rcsTask':
+								return $this->returnResponse($this->rcsTask($this->parameters));
+								break;
+							case 'saveInfotask':
+								return $this->returnResponse($this->saveInfotask($this->parameters));
+								break;
+							case 'savePart':
+								return $this->returnResponse($this->savePart($this->parameters));
+								break;
+							case 'listDropdown':
+								return $this->returnResponse($this->listDropdown($this->parameters));
+								break;
+							case 'rcsplanningTask':
+								return $this->returnResponse($this->rcsplanningTask($this->parameters));
+								break;
+							case 'stopTasks':
+								return $this->returnResponse($this->stopTasks($this->parameters));
+								break;
+							default:
+								$this->messageLostError();
+								break;
+						}
+					break;
+					case 'waypoint':
+						$this->pluginActivated($resource);
+						switch ($function) {
+							case 'statsWaypoint':
+								return $this->returnResponse($this->statsWaypoint($this->parameters));
+								break;
+							case 'startWaypoint':
+								return $this->returnResponse($this->startWaypoint($this->parameters));
+								break;
+							case 'endWaypoint':
+								return $this->returnResponse($this->endWaypoint($this->parameters));
+								break;
+							case 'tasksWaypoint':
+								return $this->returnResponse($this->tasksWaypoint($this->parameters));
+								break;
+							
+							default:
+								$this->messageLostError();
+								break;
+						}
+					break;
+					default:
+						$this->messageLostError();
+					break;
+				}
 			break;
 		}
-
 	}
+
 
 	public function returnResponse($response, $httpcode = 200, $additionalheaders = []) {
 		if (empty($httpcode)) {
@@ -386,6 +571,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		exit;
 	}
 
+
 	protected function documentsTicket($params=[]){
 		global $DB;
 
@@ -401,36 +587,33 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		if (!$ticket->can($ticket_id, READ)) {
 			return $this->messageRightError();
 		}
+		if (!isset($params['add_keys_names'])) {
+			$params['add_keys_names'] = [];
+		}
 		$fields = [];
-		$doc_iterator = $DB->request([
-			'SELECT'    => [
-				'glpi_documents.id',
-				'glpi_documents.name',
-				'glpi_documents_items.date_mod',
-				'glpi_documents_items.users_id',
-				'glpi_documents.link',
-				'glpi_documents.filename',
-				'glpi_documents.mime'
-			],
-			'FROM'      => 'glpi_documents_items',
-			'INNER JOIN' => [
-				'glpi_documents'           => [
-					'ON' => [
-						'glpi_documents_items'  => 'documents_id',
-						'glpi_documents'        => 'id'
-					]
-				]
-			],
-			'WHERE'     => [
-				'glpi_documents_items.items_id'  => $ticket_id,
-				'glpi_documents_items.itemtype'  => $ticket->getType(),
-			]
+		$document=new Document();
+		$document_item_obj = new Document_Item();
+		$document_items = $document_item_obj->find([
+			$ticket->getAssociatedDocumentsCriteria(),
+			'timeline_position'  => ['>', CommonITILObject::NO_TIMELINE]
 		]);
-		while ($data = $doc_iterator->next()) {
-			$document=new Document();
-			$document->getFromDB($data['id']);
+		foreach ($document_items as $document_item) {
+			$document->getFromDB($document_item['documents_id']);
 			$file = GLPI_DOC_DIR."/".$document->fields['filepath'];
+			$data = $document->fields;
 			$data['filesize']  = filesize($file);
+			$data['date_mod']  = $document_item['date_mod'];
+			$data['users_id']  = $document_item['users_id'];
+			$data['timeline_position'] = $document_item['timeline_position'];
+			$data['items_id'] = $document_item['items_id'];
+			$data['itemtype'] = $document_item['itemtype'];
+			if (count($params['add_keys_names']) > 0) {
+				$data["_keys_names"] = $this->getFriendlyNames(
+					$data,
+					$params,
+					$ticket->getType()
+				);
+			}
 			$fields[] = $data;
 		}
 
@@ -438,6 +621,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $fields;
 	}
+
 
 	protected function pluginList($params=[]){
 		global $DB;
@@ -455,6 +639,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return array_values($found);
 	}
+
 
 	protected function basicInfo($params=[]){
 		global $DB;
@@ -480,58 +665,72 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		while ($data = $iterator->next()) {
 			$info['documenttype'][] = $data;
 		}
+
+		$info['token'] = PluginGappextendedToken::getToken(Session::getLoginUserID());
+		$info['version'] = PluginGappextendedToken::getVersion($info['token']);
+		$info['ostype'] = PluginGappextendedToken::getOSType($info['token']);
+		$info['osversion'] = PluginGappextendedToken::getOSVersion($info['token']);
 		
 		return $info;
 	}
 
-	protected function itilCategory($params=[]){
+
+	protected function itilCategory($params=[]) {
 		global $DB;
 
 		$this->initEndpoint();
-		$info=[];
+		$info = [];
 		$item = new ITILCategory();
-
-		$query=[
-			'SELECT'=>[
+		$query = [
+			'SELECT' => [
 				'id',
+				'name',
 				'completename',
 				'is_incident',
 				'is_request',
 				'level',
-				'itilcategories_id'
+				'itilcategories_id',
+				'comment'
 			],
-			'FROM'=>'glpi_itilcategories',
-			'WHERE'=>getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+			'FROM' => 'glpi_itilcategories',
+			'WHERE' => getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactive_entity'], $item->maybeRecursive()),
+			'ORDER' => 'completename ASC'
 		];
+		if (isset($params['is_helpdeskvisible'])) {
+			$query['WHERE']['is_helpdeskvisible'] = $params['is_helpdeskvisible'];
+		}
 		if (isset($params['is_incident'])) {
-			$query['WHERE']['is_incident']=$params['is_incident'];
+			$query['WHERE']['is_incident'] = $params['is_incident'];
 		}
 		if (isset($params['is_request'])) {
-			$query['WHERE']['is_request']=$params['is_request'];
+			$query['WHERE']['is_request'] = $params['is_request'];
 		}
 		if ($result = $DB->request($query)) {
 			while ($data = $result->next()) {
 				$info[] = $data;
 			}
 		}
+
 		return $info;
 	}
 
-	protected function location($params=[]){
+
+	protected function location($params=[]) {
 		global $DB;
 
 		$this->initEndpoint();
-		$info=[];
+		$info = [];
 		$item = new Location();
-		$query=[
-			'SELECT'=>[
+		$query = [
+			'SELECT' => [
 				'id',
+				'name',
 				'completename',
 				'level',
 				'locations_id'
 			],
-			'FROM'=>'glpi_locations',
-			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+			'FROM' => 'glpi_locations',
+			'WHERE' => getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactive_entity'], $item->maybeRecursive()),
 		];
 		if ($result = $DB->request($query)) {
 			while ($data = $result->next()) {
@@ -541,5 +740,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $info;
 	}
+
 
 }
