@@ -73,9 +73,10 @@ function plugin_version_gappessentials() {
  */
 function plugin_gappessentials_check_prerequisites() {
    $path=substr(Plugin::getPhpDir('gappessentials',false),1,(strpos(Plugin::getPhpDir('gappessentials',false),"/",1)-1));
-   if($path=="marketplace"){
+   if($path=="marketplace"){   
       return true;
    }
+   echo __("Gapp Essentials must be installed via Marketplace","gappessentials");
    return false;
 }
 
