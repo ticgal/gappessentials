@@ -26,7 +26,7 @@
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_GAPPESSENTIALS_VERSION', '1.2.0');
+define('PLUGIN_GAPPESSENTIALS_VERSION', '1.2.1');
 // Minimal GLPI version, inclusive
 define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.5.0");
 define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "9.6.0");
