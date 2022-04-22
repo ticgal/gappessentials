@@ -6,21 +6,16 @@
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
-
  LICENSE
-
  This file is part of GappEssentials.
-
  GappEssentials is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
-
  GappEssentials is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
@@ -48,7 +43,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$this->parameters['upload_result'][] = $upload_result;
 		}
 	}
-
 
 	public function parseIncomingParams($is_inline_doc = false) {
 
@@ -180,7 +174,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return "";
 	}
 
-
 	private function initEndpoint($unlock_session = true, $endpoint = "") {
 
 		if ($endpoint === "") {
@@ -194,7 +187,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			self::unlockSessionIfPossible();
 		}
 	}
-
 
 	/**
 	* Check if the app_toke in case of config ask to
@@ -266,6 +258,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+
+
 	/**
 	* Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
 	* it always find the second
@@ -286,15 +280,15 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 
-	private function pluginActivated($name='gappextended'){
+
+	private function pluginActivated(){
 
 		$plugin=new Plugin();
 
-		if (!$plugin->isActivated($name)) {
+		if (!$plugin->isActivated('gappessentials')) {
 			$this->returnError("Plugin disabled", 400, "ERROR_PLUGIN_DISABLED");
 		}
 	}
-
 
 	public function call() {
 
@@ -623,6 +617,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 
+
 	protected function pluginList($params=[]){
 		global $DB;
 
@@ -665,15 +660,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		while ($data = $iterator->next()) {
 			$info['documenttype'][] = $data;
 		}
-
-		$info['token'] = PluginGappextendedToken::getToken(Session::getLoginUserID());
-		$info['version'] = PluginGappextendedToken::getVersion($info['token']);
-		$info['ostype'] = PluginGappextendedToken::getOSType($info['token']);
-		$info['osversion'] = PluginGappextendedToken::getOSVersion($info['token']);
 		
 		return $info;
 	}
-
 
 	protected function itilCategory($params=[]) {
 		global $DB;
