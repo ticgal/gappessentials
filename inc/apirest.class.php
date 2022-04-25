@@ -6,21 +6,16 @@
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
-
  LICENSE
-
  This file is part of GappEssentials.
-
  GappEssentials is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
-
  GappEssentials is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
-
  You should have received a copy of the GNU General Public License
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
@@ -213,6 +208,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+
 	/**
 	* Log usage of the api into glpi historical or log files (defined by api config)
 	*
@@ -249,6 +245,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+
 	/**
 	* Unlock the current session (readonly) to permit concurrent call
 	*
@@ -260,6 +257,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			session_write_close();
 		}
 	}
+
+
 
 	/**
 	* Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
@@ -279,6 +278,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $id;
 	}
+
+
 
 	private function pluginActivated(){
 
@@ -350,8 +351,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 				$this->messageLostError();
 			break;
 		}
-
 	}
+
 
 	public function returnResponse($response, $httpcode = 200, $additionalheaders = []) {
 		if (empty($httpcode)) {
@@ -386,6 +387,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		exit;
 	}
 
+
 	protected function documentsTicket($params=[]){
 		global $DB;
 
@@ -401,36 +403,33 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		if (!$ticket->can($ticket_id, READ)) {
 			return $this->messageRightError();
 		}
+		if (!isset($params['add_keys_names'])) {
+			$params['add_keys_names'] = [];
+		}
 		$fields = [];
-		$doc_iterator = $DB->request([
-			'SELECT'    => [
-				'glpi_documents.id',
-				'glpi_documents.name',
-				'glpi_documents_items.date_mod',
-				'glpi_documents_items.users_id',
-				'glpi_documents.link',
-				'glpi_documents.filename',
-				'glpi_documents.mime'
-			],
-			'FROM'      => 'glpi_documents_items',
-			'INNER JOIN' => [
-				'glpi_documents'           => [
-					'ON' => [
-						'glpi_documents_items'  => 'documents_id',
-						'glpi_documents'        => 'id'
-					]
-				]
-			],
-			'WHERE'     => [
-				'glpi_documents_items.items_id'  => $ticket_id,
-				'glpi_documents_items.itemtype'  => $ticket->getType(),
-			]
+		$document=new Document();
+		$document_item_obj = new Document_Item();
+		$document_items = $document_item_obj->find([
+			$ticket->getAssociatedDocumentsCriteria(),
+			'timeline_position'  => ['>', CommonITILObject::NO_TIMELINE]
 		]);
-		while ($data = $doc_iterator->next()) {
-			$document=new Document();
-			$document->getFromDB($data['id']);
+		foreach ($document_items as $document_item) {
+			$document->getFromDB($document_item['documents_id']);
 			$file = GLPI_DOC_DIR."/".$document->fields['filepath'];
+			$data = $document->fields;
 			$data['filesize']  = filesize($file);
+			$data['date_mod']  = $document_item['date_mod'];
+			$data['users_id']  = $document_item['users_id'];
+			$data['timeline_position'] = $document_item['timeline_position'];
+			$data['items_id'] = $document_item['items_id'];
+			$data['itemtype'] = $document_item['itemtype'];
+			if (count($params['add_keys_names']) > 0) {
+				$data["_keys_names"] = $this->getFriendlyNames(
+					$data,
+					$params,
+					$ticket->getType()
+				);
+			}
 			$fields[] = $data;
 		}
 
@@ -438,6 +437,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $fields;
 	}
+
+
 
 	protected function pluginList($params=[]){
 		global $DB;
@@ -455,6 +456,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return array_values($found);
 	}
+
 
 	protected function basicInfo($params=[]){
 		global $DB;
@@ -484,54 +486,62 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return $info;
 	}
 
-	protected function itilCategory($params=[]){
+	protected function itilCategory($params=[]) {
 		global $DB;
 
 		$this->initEndpoint();
-		$info=[];
+		$info = [];
 		$item = new ITILCategory();
-
-		$query=[
-			'SELECT'=>[
+		$query = [
+			'SELECT' => [
 				'id',
+				'name',
 				'completename',
 				'is_incident',
 				'is_request',
 				'level',
-				'itilcategories_id'
+				'itilcategories_id',
+				'comment'
 			],
-			'FROM'=>'glpi_itilcategories',
-			'WHERE'=>getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+			'FROM' => 'glpi_itilcategories',
+			'WHERE' => getEntitiesRestrictCriteria('glpi_itilcategories', '', $_SESSION['glpiactive_entity'], $item->maybeRecursive()),
+			'ORDER' => 'completename ASC'
 		];
+		if (isset($params['is_helpdeskvisible'])) {
+			$query['WHERE']['is_helpdeskvisible'] = $params['is_helpdeskvisible'];
+		}
 		if (isset($params['is_incident'])) {
-			$query['WHERE']['is_incident']=$params['is_incident'];
+			$query['WHERE']['is_incident'] = $params['is_incident'];
 		}
 		if (isset($params['is_request'])) {
-			$query['WHERE']['is_request']=$params['is_request'];
+			$query['WHERE']['is_request'] = $params['is_request'];
 		}
 		if ($result = $DB->request($query)) {
 			while ($data = $result->next()) {
 				$info[] = $data;
 			}
 		}
+
 		return $info;
 	}
 
-	protected function location($params=[]){
+
+	protected function location($params=[]) {
 		global $DB;
 
 		$this->initEndpoint();
-		$info=[];
+		$info = [];
 		$item = new Location();
-		$query=[
-			'SELECT'=>[
+		$query = [
+			'SELECT' => [
 				'id',
+				'name',
 				'completename',
 				'level',
 				'locations_id'
 			],
-			'FROM'=>'glpi_locations',
-			'WHERE'=>getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactiveentities'],$item->maybeRecursive(), true),
+			'FROM' => 'glpi_locations',
+			'WHERE' => getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactive_entity'], $item->maybeRecursive()),
 		];
 		if ($result = $DB->request($query)) {
 			while ($data = $result->next()) {
@@ -541,5 +551,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $info;
 	}
+
 
 }
