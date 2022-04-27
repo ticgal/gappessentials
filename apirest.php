@@ -25,15 +25,23 @@
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+use Glpi\Cache\CacheManager;
 
 define('GLPI_ROOT', substr(__DIR__,0,strpos(__DIR__,"/marketplace")));
 define('DO_NOT_CHECK_HTTP_REFERER', 1);
 ini_set('session.use_cookies', 0);
 
-include_once (GLPI_ROOT . "/inc/based_config.php");
+include_once(GLPI_ROOT . "/inc/based_config.php");
 include_once(GLPI_ROOT."/marketplace/gappessentials/inc/apirest.class.php");
 
-$GLPI_CACHE = Config::getCache('cache_db');
+// Init loggers
+$GLPI = new GLPI();
+$GLPI->initLogger();
+$GLPI->initErrorHandler();
+
+//init cache
+$cache_manager = new CacheManager();
+$GLPI_CACHE = $cache_manager->getCoreCacheInstance();
 
 $api = new PluginGappEssentialsApirest();
 $api->call();
