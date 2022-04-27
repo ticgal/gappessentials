@@ -25,10 +25,10 @@
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
-
-define('PLUGIN_GAPPESSENTIALS_VERSION', '1.3.0');
+use Glpi\Plugin\Hooks;
+define('PLUGIN_GAPPESSENTIALS_VERSION', '1.4.0');
 // Minimal GLPI version, inclusive
-define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "9.5.0");
+define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "10.0.0");
 define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "10.0.99");
 
 /**
