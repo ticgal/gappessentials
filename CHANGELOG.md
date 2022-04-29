@@ -1,8 +1,8 @@
 # GappEssentials CHANGELOG
 ## 1.3.0
 ### Features
-- Add a warning if Gapp Essentials is installed in the plugins folder
-- Migrate essentials functions to newest version
+- Add a warning if Gapp Essentials is installed in the plugins folder #9374
+- Migrate essentials functions to newest version #9370
 
 ## 1.2.1
 ### Bugfixes
