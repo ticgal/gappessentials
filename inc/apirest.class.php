@@ -492,8 +492,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 				'is_uploadable'=>1
 			]
 		];
-		$iterator=$DB->request($sql);
-		while ($data = $iterator->next()) {
+		$iterator = $DB->request($sql);
+		foreach ($iterator as $data) {
 			$info['documenttype'][] = $data;
 		}
 		
@@ -531,7 +531,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$query['WHERE']['is_request'] = $params['is_request'];
 		}
 		if ($result = $DB->request($query)) {
-			while ($data = $result->next()) {
+			foreach ($result as $data) {
 				$info[] = $data;
 			}
 		}
@@ -558,7 +558,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			'WHERE' => getEntitiesRestrictCriteria('glpi_locations', '', $_SESSION['glpiactive_entity'], $item->maybeRecursive()),
 		];
 		if ($result = $DB->request($query)) {
-			while ($data = $result->next()) {
+			foreach ($result as $data) {
 				$info[] = $data;
 			}
 		}
