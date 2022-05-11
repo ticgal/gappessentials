@@ -1,4 +1,8 @@
 # GappEssentials CHANGELOG
+## 2.0.0
+### Features
+- GLPI 10 Compatibility #9316
+
 ## 1.3.0
 ### Features
 - Add a warning if Gapp Essentials is installed in the plugins folder #9374
