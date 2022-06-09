@@ -184,7 +184,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return "";
 	 }
 
-	private function initEndpoint($unlock_session = true, $endpoint = "") {
+	protected function initEndpoint($unlock_session = true, $endpoint = "") {
 
 		if ($endpoint === "") {
 			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
