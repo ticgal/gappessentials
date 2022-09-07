@@ -437,6 +437,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$data['timeline_position'] = $document_item['timeline_position'];
 			$data['items_id'] = $document_item['items_id'];
 			$data['itemtype'] = $document_item['itemtype'];
+			$data['tickets_id'] = $ticket_id;
 			if (count($params['add_keys_names']) > 0) {
 				$data["_keys_names"] = $this->getFriendlyNames(
 					$data,
