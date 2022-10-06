@@ -33,6 +33,11 @@ ini_set('session.use_cookies', 0);
 include_once (GLPI_ROOT . "/inc/based_config.php");
 include_once(GLPI_ROOT."/marketplace/gappessentials/inc/apirest.class.php");
 
+// Init loggers
+$GLPI = new GLPI();
+$GLPI->initLogger();
+$GLPI->initErrorHandler();
+
 $GLPI_CACHE = Config::getCache('cache_db');
 
 $api = new PluginGappEssentialsApirest();

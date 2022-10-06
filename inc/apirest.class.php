@@ -364,7 +364,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 
 		http_response_code($httpcode);
-		self::header($this->debug);
+		$this->header($this->debug);
 
 		if ($response !== null) {
 			$json = json_encode($response, JSON_UNESCAPED_UNICODE
@@ -444,17 +444,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		global $DB;
 
 		$this->initEndpoint();
-		$table = getTableForItemType(Plugin::getType());
-
-		// build query
-		$query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT `$table`.id,  `$table`.* FROM `$table`";
-		if ($result = $DB->query($query)) {
-			while ($data = $DB->fetchAssoc($result)) {
-				$found[] = $data;
-			}
-		}
-
-		return array_values($found);
+		
+		$plugin = new Plugin();
+		return $plugin->getList();
 	}
 
 
