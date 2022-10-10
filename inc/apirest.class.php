@@ -21,6 +21,9 @@
  --------------------------------------------------------------------------
 */
 
+use GLPIUploadHandler;
+use Toolbox;
+
 class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected $request_uri;
 	protected $url_elements;
