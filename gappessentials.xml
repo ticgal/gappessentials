@@ -8,19 +8,25 @@
             <en>Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app.</en>
         </short>
         <long>
-            <en>Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app.
-             
-		Since Gapp 2, Gapp Essentials is mandatory to work with the app.
-		    
-		Currently enables:
-		
-                -access to ticket documents
-                -plugins list to Self-service users
+            <en>
+                Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app.
+           
+                Since Gapp 2, Gapp Essentials is mandatory to work
+                with the app.
+
+                We are encouraging the updating of GLPI to avoid
+                security issues. Supported versions:
+                -9.5.9
+                -10.0.3
+		     
+                Currently enables:
+                -Access to ticket documents
+                -Plugins list to Self-service users
                 -Max. uploadable file size 
                 -Allowed filetypes
                 -Download file size
             
-            No additional configuration is needed.</en>
+                No additional configuration is needed.</en>
         </long>
     </description>
     <homepage>https://tic.gal/en/project/gappessentials/</homepage>
