@@ -5,11 +5,12 @@
     <logo>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png</logo>
     <description>
         <short>
-            <en>Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app.</en>
+            <en>Gapp essentials is a mandatory plugin to enable extended functionalities on Gapp, a GLPI mobile app.</en>
         </short>
         <long>
             <en>
-                Gapp essentials is a companion plugin to enable extended functionalities on Gapp, a GLPI mobile app.
+		Gapp essentials is a mandatory plugin to enable 
+		extended functionalities on Gapp, a GLPI mobile app.
            
                 Since Gapp 2, Gapp Essentials is mandatory to work
                 with the app.
@@ -37,6 +38,16 @@
         <author>TICgal</author>
     </authors>
     <versions>
+        <version>
+            <num>2.1.1</num>
+            <compatibility>^10.0.3</compatibility>
+            <download_url>https://github.com/ticgal/gappessentials/releases/download/2.1.1/glpi-gappessentials-2.1.1.tar.tgz</download_url>
+        </version>
+        <version>
+            <num>1.4.1</num>
+            <compatibility>^9.5.9</compatibility>
+            <download_url>https://github.com/ticgal/gappessentials/releases/download/1.4.1/glpi-gappessentials-1.4.1.tar.tgz</download_url>
+        </version>
         <version>
             <num>2.1.0</num>
             <compatibility>^10.0.3</compatibility>
@@ -98,5 +109,6 @@
         <screenshot>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/GappEssentials-GLPI-Plugin-Gapp-Selfservice-1.jpg</screenshot>
         <screenshot>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/GappEssentials-GLPI-Plugin-Gapp-Selfservice-2.jpg</screenshot>
         <screenshot>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/GappEssentials-GLPI-Plugin-Gapp-Selfservice-3.jpg</screenshot>
+        <screenshot>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/GappEssentials-GLPI-Plugin-Gapp-Selfservice-4.jpg</screenshot>
     </screenshots>
 </root>
