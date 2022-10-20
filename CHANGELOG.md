@@ -1,4 +1,8 @@
 # GappEssentials CHANGELOG
+## 2.0.1
+### Features
+- GLPI 10.0.1 Compatibility #10120
+
 ## 2.0.0
 ### Features
 - GLPI 10 Compatibility #9316

@@ -21,6 +21,9 @@
  --------------------------------------------------------------------------
 */
 
+use GLPIUploadHandler;
+use Toolbox;
+
 class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected $request_uri;
 	protected $url_elements;
@@ -35,6 +38,10 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 	public function manageUploadedFiles() {
 		foreach (array_keys($_FILES) as $filename) {
+			$rand_name = uniqid('', true);
+			foreach ($_FILES[$filename]['name'] as &$name) {
+				$name = $rand_name . $name;
+			}
 		   $upload_result
 			  = GLPIUploadHandler::uploadFiles(['name'           => $filename,
 												'print_response' => false]);
@@ -184,7 +191,21 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return "";
 	 }
 
-	private function initEndpoint($unlock_session = true, $endpoint = "") {
+	private function inputObjectToArray($input) {
+		if (is_object($input)) {
+			$input = get_object_vars($input);
+		}
+
+		if (is_array($input)) {
+			foreach ($input as &$sub_input) {
+				$sub_input = self::inputObjectToArray($sub_input);
+			}
+		}
+
+		return $input;
+	}
+
+	protected function initEndpoint($unlock_session = true, $endpoint = "") {
 
 		if ($endpoint === "") {
 			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -268,7 +289,36 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		}
 	}
 
+	private function getGlpiLastMessage() {
+		global $DEBUG_SQL;
 
+		$all_messages             = [];
+
+		$messages_after_redirect  = [];
+
+		if (isset($_SESSION["MESSAGE_AFTER_REDIRECT"]) && count($_SESSION["MESSAGE_AFTER_REDIRECT"]) > 0) {
+			$messages_after_redirect = $_SESSION["MESSAGE_AFTER_REDIRECT"];
+			// Clean messages
+			$_SESSION["MESSAGE_AFTER_REDIRECT"] = [];
+		};
+
+		// clean html
+		foreach ($messages_after_redirect as $messages) {
+			foreach ($messages as $message) {
+				$all_messages[] = Toolbox::stripTags($message);
+			}
+		}
+
+		// get sql errors
+		if (count($all_messages) <= 0 && $DEBUG_SQL['errors'] !== null) {
+			$all_messages = $DEBUG_SQL['errors'];
+		}
+
+		if (!end($all_messages)) {
+			return '';
+		}
+		return end($all_messages);
+	}
 
 	/**
 	* Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
@@ -303,6 +353,26 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$this->returnError("Plugin disabled", 400, "ERROR_PLUGIN_DISABLED");
 		}
 	}
+
+	/**
+   * List of API ressources for which a valid session isn't required
+   *
+   * @return array
+   */
+	protected function getRessourcesAllowedWithoutSession(): array
+	{
+		return [];
+	}
+	
+	/**
+	* List of API ressources that may write php session data
+	*
+	* @return array
+	*/
+	protected function getRessourcesWithSessionWrite(): array
+	{
+		return [];
+	} 
 
 	public function call() {
 
@@ -341,6 +411,16 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		// retrieve param who permit session writing
 		if (isset($this->parameters['session_write'])) {
 			$this->session_write = (bool)$this->parameters['session_write'];
+		}
+
+		// Do not unlock the php session for ressources that may handle it
+		if (in_array($resource, $this->getRessourcesWithSessionWrite())) {
+			$this->session_write = true;
+		}
+		
+		// Check API session unless blacklisted (init session, ...)
+		if (!$is_inline_doc && !in_array($resource, $this->getRessourcesAllowedWithoutSession())) {
+			$this->initEndpoint(true, $resource);
 		}
 
 		$this->pluginActivated();
@@ -384,6 +464,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		if ($response !== null) {
 		   $json = json_encode($response, JSON_UNESCAPED_UNICODE
 										| JSON_UNESCAPED_SLASHES
+										| JSON_NUMERIC_CHECK
 										| ($this->debug
 											? JSON_PRETTY_PRINT
 											: 0));
@@ -404,8 +485,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 	protected function documentsTicket($params=[]){
 		global $DB;
-
-		$this->initEndpoint();
 
 		$ID=Session::getLoginUserID();
 		$ticket_id=$this->getId();
@@ -437,6 +516,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$data['timeline_position'] = $document_item['timeline_position'];
 			$data['items_id'] = $document_item['items_id'];
 			$data['itemtype'] = $document_item['itemtype'];
+			$data['tickets_id'] = $ticket_id;
 			if (count($params['add_keys_names']) > 0) {
 				$data["_keys_names"] = $this->getFriendlyNames(
 					$data,
@@ -455,27 +535,15 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 
 	protected function pluginList($params=[]){
-		global $DB;
 
-		$this->initEndpoint();
-		$table = getTableForItemType(Plugin::getType());
-
-		// build query
-		$query = "SELECT SQL_CALC_FOUND_ROWS DISTINCT `$table`.id,  `$table`.* FROM `$table`";
-		if ($result = $DB->query($query)) {
-			while ($data = $DB->fetchAssoc($result)) {
-				$found[] = $data;
-			}
-		}
-
-		return array_values($found);
+		$plugin = new Plugin();
+		return $plugin->getList();
 	}
 
 
 	protected function basicInfo($params=[]){
 		global $DB;
 
-		$this->initEndpoint();
 		$info=[];
 		$info['documenttype']=[];
 
@@ -503,7 +571,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected function itilCategory($params=[]) {
 		global $DB;
 
-		$this->initEndpoint();
 		$info = [];
 		$item = new ITILCategory();
 		$query = [
@@ -543,7 +610,6 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected function location($params=[]) {
 		global $DB;
 
-		$this->initEndpoint();
 		$info = [];
 		$item = new Location();
 		$query = [

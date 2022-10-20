@@ -27,7 +27,7 @@
  */
 use Glpi\Cache\CacheManager;
 
-define('GLPI_ROOT', substr(__DIR__,0,strpos(__DIR__,"/marketplace")));
+define('GLPI_ROOT', substr(__DIR__,0,(strpos(__DIR__,"marketplace")-1)));
 define('DO_NOT_CHECK_HTTP_REFERER', 1);
 ini_set('session.use_cookies', 0);
 
