@@ -1,4 +1,12 @@
 # GappEssentials CHANGELOG
+## 1.4.1
+### Bugfixes
+- Fix include
+
+## 1.4.0
+### Features
+- Restrict support to GLPI 9.5.9+
+
 ## 1.3.0
 ### Features
 - Add a warning if Gapp Essentials is installed in the plugins folder #9374
