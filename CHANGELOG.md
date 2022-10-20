@@ -1,4 +1,12 @@
 # GappEssentials CHANGELOG
+## 2.1.1
+### Bugfixes
+- Fix include
+
+## 2.1.0
+### Features
+- Restrict support to GLPI 10.0.3+
+
 ## 2.0.1
 ### Features
 - GLPI 10.0.1 Compatibility #10120
