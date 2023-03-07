@@ -580,6 +580,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 				'completename',
 				'is_incident',
 				'is_request',
+				'is_helpdeskvisible',
 				'level',
 				'itilcategories_id',
 				'comment'
