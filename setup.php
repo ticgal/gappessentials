@@ -25,7 +25,9 @@
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+
 use Glpi\Plugin\Hooks;
+
 define('PLUGIN_GAPPESSENTIALS_VERSION', '2.1.1');
 // Minimal GLPI version, inclusive
 define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "10.0.3");
@@ -37,7 +39,8 @@ define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "10.0.99");
  *
  * @return void
  */
-function plugin_init_gappessentials() {
+function plugin_init_gappessentials()
+{
    global $PLUGIN_HOOKS;
 
    $PLUGIN_HOOKS['csrf_compliant']['gappessentials'] = true;
@@ -49,7 +52,8 @@ function plugin_init_gappessentials() {
  *
  * @return array
  */
-function plugin_version_gappessentials() {
+function plugin_version_gappessentials()
+{
    return [
       'name'           => 'Gapp Essentials',
       'version'        => PLUGIN_GAPPESSENTIALS_VERSION,
@@ -71,12 +75,13 @@ function plugin_version_gappessentials() {
  *
  * @return boolean
  */
-function plugin_gappessentials_check_prerequisites() {
-   $path=substr(Plugin::getPhpDir('gappessentials',false),1,(strpos(Plugin::getPhpDir('gappessentials',false),"/",1)-1));
-   if($path=="marketplace"){   
+function plugin_gappessentials_check_prerequisites()
+{
+   $path = substr(Plugin::getPhpDir('gappessentials', false), 1, (strpos(Plugin::getPhpDir('gappessentials', false), "/", 1) - 1));
+   if ($path == "marketplace") {
       return true;
    }
-   echo __("Gapp Essentials must be installed via Marketplace","gappessentials");
+   echo __("Gapp Essentials must be installed via Marketplace", "gappessentials");
    return false;
 }
 
@@ -87,6 +92,7 @@ function plugin_gappessentials_check_prerequisites() {
  *
  * @return boolean
  */
-function plugin_gappessentials_check_config($verbose = false) {
+function plugin_gappessentials_check_config($verbose = false)
+{
    return true;
 }

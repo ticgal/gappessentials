@@ -24,7 +24,8 @@
 use GLPIUploadHandler;
 use Toolbox;
 
-class PluginGappEssentialsApirest extends Glpi\Api\API {
+class PluginGappEssentialsApirest extends Glpi\Api\API
+{
 	protected $request_uri;
 	protected $url_elements;
 	protected $verb;
@@ -32,166 +33,194 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	protected $debug = 0;
 	protected $format = "json";
 
-	public static function getTypeName($nb = 0) {
-		return __('GappEssentials rest API','gappessentials');
+	public static function getTypeName($nb = 0)
+	{
+		return __('GappEssentials rest API', 'gappessentials');
 	}
 
-	public function manageUploadedFiles() {
+	public function manageUploadedFiles()
+	{
 		foreach (array_keys($_FILES) as $filename) {
 			$rand_name = uniqid('', true);
 			foreach ($_FILES[$filename]['name'] as &$name) {
 				$name = $rand_name . $name;
 			}
-		   $upload_result
-			  = GLPIUploadHandler::uploadFiles(['name'           => $filename,
-												'print_response' => false]);
-		   foreach ($upload_result as $uresult) {
-			  $this->parameters['input']->_filename[] = $uresult[0]->name;
-			  $this->parameters['input']->_prefix_filename[] = $uresult[0]->prefix;
-		   }
-		   $this->parameters['upload_result'][] = $upload_result;
+			$upload_result
+				= GLPIUploadHandler::uploadFiles([
+					'name'           => $filename,
+					'print_response' => false
+				]);
+			foreach ($upload_result as $uresult) {
+				$this->parameters['input']->_filename[] = $uresult[0]->name;
+				$this->parameters['input']->_prefix_filename[] = $uresult[0]->prefix;
+			}
+			$this->parameters['upload_result'][] = $upload_result;
 		}
-	 }
+	}
 
-	 public function parseIncomingParams($is_inline_doc = false) {
+	public function parseIncomingParams($is_inline_doc = false)
+	{
 
 		$parameters = [];
-  
+
 		// first of all, pull the GET vars
 		if (isset($_SERVER['QUERY_STRING'])) {
-		   parse_str($_SERVER['QUERY_STRING'], $parameters);
+			parse_str($_SERVER['QUERY_STRING'], $parameters);
 		}
-  
+
 		// now how about PUT/POST bodies? These override what we got from GET
 		$body = trim($this->getHttpBody());
 		if (strlen($body) > 0 && $this->verb == "GET") {
-		   // GET method requires an empty body
-		   $this->returnError("GET Request should not have json payload (http body)", 400,
-							  "ERROR_JSON_PAYLOAD_FORBIDDEN");
+			// GET method requires an empty body
+			$this->returnError(
+				"GET Request should not have json payload (http body)",
+				400,
+				"ERROR_JSON_PAYLOAD_FORBIDDEN"
+			);
 		}
-  
+
 		$content_type = "";
 		if (isset($_SERVER['CONTENT_TYPE'])) {
-		   $content_type = $_SERVER['CONTENT_TYPE'];
+			$content_type = $_SERVER['CONTENT_TYPE'];
 		} else if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
-		   $content_type = $_SERVER['HTTP_CONTENT_TYPE'];
+			$content_type = $_SERVER['HTTP_CONTENT_TYPE'];
 		} else {
-		   if (!$is_inline_doc) {
-			  $content_type = "application/json";
-		   }
+			if (!$is_inline_doc) {
+				$content_type = "application/json";
+			}
 		}
-  
+
 		if (strpos($content_type, "application/json") !== false) {
-		   if ($body_params = json_decode($body)) {
-			  foreach ($body_params as $param_name => $param_value) {
-				 $parameters[$param_name] = $param_value;
-			  }
-		   } else if (strlen($body) > 0) {
-			  $this->returnError("JSON payload seems not valid", 400, "ERROR_JSON_PAYLOAD_INVALID",
-								 false);
-		   }
-		   $this->format = "json";
-  
+			if ($body_params = json_decode($body)) {
+				foreach ($body_params as $param_name => $param_value) {
+					$parameters[$param_name] = $param_value;
+				}
+			} else if (strlen($body) > 0) {
+				$this->returnError(
+					"JSON payload seems not valid",
+					400,
+					"ERROR_JSON_PAYLOAD_INVALID",
+					false
+				);
+			}
+			$this->format = "json";
 		} else if (strpos($content_type, "multipart/form-data") !== false) {
-		   if (count($_FILES) <= 0) {
-			  // likely uploaded files is too big so $_REQUEST will be empty also.
-			  // see http://us.php.net/manual/en/ini.core.php#ini.post-max-size
-			  $this->returnError("The file seems too big", 400,
-								 "ERROR_UPLOAD_FILE_TOO_BIG_POST_MAX_SIZE", false);
-		   }
-  
-		   // with this content_type, php://input is empty... (see http://php.net/manual/en/wrappers.php.php)
-		   if (!$uploadManifest = json_decode($_REQUEST['uploadManifest'])) {
-			  $this->returnError("JSON payload seems not valid", 400, "ERROR_JSON_PAYLOAD_INVALID",
-								 false);
-		   }
-		   foreach ($uploadManifest as $field => $value) {
-			  $parameters[$field] = $value;
-		   }
-		   $this->format = "json";
-  
-		   // move files into _tmp folder
-		   $parameters['upload_result'] = [];
-		   $parameters['input']->_filename = [];
-		   $parameters['input']->_prefix_filename = [];
-  
+			if (count($_FILES) <= 0) {
+				// likely uploaded files is too big so $_REQUEST will be empty also.
+				// see http://us.php.net/manual/en/ini.core.php#ini.post-max-size
+				$this->returnError(
+					"The file seems too big",
+					400,
+					"ERROR_UPLOAD_FILE_TOO_BIG_POST_MAX_SIZE",
+					false
+				);
+			}
+
+			// with this content_type, php://input is empty... (see http://php.net/manual/en/wrappers.php.php)
+			if (!$uploadManifest = json_decode($_REQUEST['uploadManifest'])) {
+				$this->returnError(
+					"JSON payload seems not valid",
+					400,
+					"ERROR_JSON_PAYLOAD_INVALID",
+					false
+				);
+			}
+			foreach ($uploadManifest as $field => $value) {
+				$parameters[$field] = $value;
+			}
+			$this->format = "json";
+
+			// move files into _tmp folder
+			$parameters['upload_result'] = [];
+			$parameters['input']->_filename = [];
+			$parameters['input']->_prefix_filename = [];
 		} else if (strpos($content_type, "application/x-www-form-urlencoded") !== false) {
-		   /** @var array $postvars */
-		   parse_str($body, $postvars);
-		   foreach ($postvars as $field => $value) {
-			  $parameters[$field] = $value;
-		   }
-		   $this->format = "html";
-  
+			/** @var array $postvars */
+			parse_str($body, $postvars);
+			foreach ($postvars as $field => $value) {
+				$parameters[$field] = $value;
+			}
+			$this->format = "html";
 		} else {
-		   $this->format = "html";
+			$this->format = "html";
 		}
-  
+
 		// retrieve HTTP headers
 		$headers = [];
 		if (function_exists('getallheaders')) {
-		   //apache specific
-		   $headers = getallheaders();
-		   if (false !== $headers && count($headers) > 0) {
-			  $fixedHeaders = [];
-			  foreach ($headers as $key => $value) {
-				 $fixedHeaders[ucwords(strtolower($key), '-')] = $value;
-			  }
-			  $headers = $fixedHeaders;
-		   }
+			//apache specific
+			$headers = getallheaders();
+			if (false !== $headers && count($headers) > 0) {
+				$fixedHeaders = [];
+				foreach ($headers as $key => $value) {
+					$fixedHeaders[ucwords(strtolower($key), '-')] = $value;
+				}
+				$headers = $fixedHeaders;
+			}
 		} else {
-		   // other servers
-		   foreach ($_SERVER as $server_key => $server_value) {
-			  if (substr($server_key, 0, 5) == 'HTTP_') {
-				 $headers[str_replace(' ', '-',
-									  ucwords(strtolower(str_replace('_', ' ',
-																	 substr($server_key, 5)))))] = $server_value;
-			  }
-		   }
+			// other servers
+			foreach ($_SERVER as $server_key => $server_value) {
+				if (substr($server_key, 0, 5) == 'HTTP_') {
+					$headers[str_replace(
+						' ',
+						'-',
+						ucwords(strtolower(str_replace(
+							'_',
+							' ',
+							substr($server_key, 5)
+						)))
+					)] = $server_value;
+				}
+			}
 		}
-  
+
 		// try to retrieve basic auth
-		if (isset($_SERVER['PHP_AUTH_USER'])
-			&& isset($_SERVER['PHP_AUTH_PW'])) {
-		   $parameters['login']    = $_SERVER['PHP_AUTH_USER'];
-		   $parameters['password'] = $_SERVER['PHP_AUTH_PW'];
+		if (
+			isset($_SERVER['PHP_AUTH_USER'])
+			&& isset($_SERVER['PHP_AUTH_PW'])
+		) {
+			$parameters['login']    = $_SERVER['PHP_AUTH_USER'];
+			$parameters['password'] = $_SERVER['PHP_AUTH_PW'];
 		}
-  
+
 		// try to retrieve user_token in header
-		if (isset($headers['Authorization'])
-			&& (strpos($headers['Authorization'], 'user_token') !== false)) {
-		   $auth = explode(' ', $headers['Authorization']);
-		   if (isset($auth[1])) {
-			  $parameters['user_token'] = $auth[1];
-		   }
+		if (
+			isset($headers['Authorization'])
+			&& (strpos($headers['Authorization'], 'user_token') !== false)
+		) {
+			$auth = explode(' ', $headers['Authorization']);
+			if (isset($auth[1])) {
+				$parameters['user_token'] = $auth[1];
+			}
 		}
-  
+
 		// try to retrieve session_token in header
 		if (isset($headers['Session-Token'])) {
-		   $parameters['session_token'] = $headers['Session-Token'];
+			$parameters['session_token'] = $headers['Session-Token'];
 		}
-  
+
 		// try to retrieve app_token in header
 		if (isset($headers['App-Token'])) {
-		   $parameters['app_token'] = $headers['App-Token'];
+			$parameters['app_token'] = $headers['App-Token'];
 		}
-  
+
 		// check boolean parameters
 		foreach ($parameters as $key => &$parameter) {
-		   if ($parameter === "true") {
-			  $parameter = true;
-		   }
-		   if ($parameter === "false") {
-			  $parameter = false;
-		   }
+			if ($parameter === "true") {
+				$parameter = true;
+			}
+			if ($parameter === "false") {
+				$parameter = false;
+			}
 		}
-  
-		$this->parameters = $parameters;
-  
-		return "";
-	 }
 
-	private function inputObjectToArray($input) {
+		$this->parameters = $parameters;
+
+		return "";
+	}
+
+	private function inputObjectToArray($input)
+	{
 		if (is_object($input)) {
 			$input = get_object_vars($input);
 		}
@@ -205,7 +234,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		return $input;
 	}
 
-	protected function initEndpoint($unlock_session = true, $endpoint = "") {
+	protected function initEndpoint($unlock_session = true, $endpoint = "")
+	{
 
 		if ($endpoint === "") {
 			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -220,11 +250,12 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 	/**
-	* Check if the app_toke in case of config ask to
-	*
-	* @return void
-	*/
-	private function checkAppToken() {
+	 * Check if the app_toke in case of config ask to
+	 *
+	 * @return void
+	 */
+	private function checkAppToken()
+	{
 
 		// check app token (if needed)
 		if (!isset($this->parameters['app_token'])) {
@@ -241,19 +272,20 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 
 	/**
-	* Log usage of the api into glpi historical or log files (defined by api config)
-	*
-	* It stores the ip and the username of the current session.
-	*
-	* @param string $endpoint function called by api to log (default '')
-	*
-	* @return void
-	*/
-	private function logEndpointUsage($endpoint = "") {
+	 * Log usage of the api into glpi historical or log files (defined by api config)
+	 *
+	 * It stores the ip and the username of the current session.
+	 *
+	 * @param string $endpoint function called by api to log (default '')
+	 *
+	 * @return void
+	 */
+	private function logEndpointUsage($endpoint = "")
+	{
 
 		$username = "";
 		if (isset($_SESSION['glpiname'])) {
-			$username = "(".$_SESSION['glpiname'].")";
+			$username = "(" . $_SESSION['glpiname'] . ")";
 		}
 
 		$apiclient = new APIClient;
@@ -261,7 +293,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$changes = [
 				0,
 				"",
-				"Enpoint '$endpoint' called by ".$this->iptxt." $username"
+				"Enpoint '$endpoint' called by " . $this->iptxt . " $username"
 			];
 
 			switch ($apiclient->fields['dolog_method']) {
@@ -270,7 +302,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 					break;
 
 				case APIClient::DOLOG_LOGS:
-					Toolbox::logInFile("api", $changes[2]."\n");
+					Toolbox::logInFile("api", $changes[2] . "\n");
 					break;
 			}
 		}
@@ -278,18 +310,20 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 
 	/**
-	* Unlock the current session (readonly) to permit concurrent call
-	*
-	* @return void
-	*/
-	private function unlockSessionIfPossible() {
+	 * Unlock the current session (readonly) to permit concurrent call
+	 *
+	 * @return void
+	 */
+	private function unlockSessionIfPossible()
+	{
 
 		if (!$this->session_write) {
 			session_write_close();
 		}
 	}
 
-	private function getGlpiLastMessage() {
+	private function getGlpiLastMessage()
+	{
 		global $DEBUG_SQL;
 
 		$all_messages             = [];
@@ -321,33 +355,35 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 	/**
-	* Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
-	* it always find the second
-	*
-	* @return integer|boolean id of current itemtype (or false if not found)
-	*/
-	private function getId() {
+	 * Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
+	 * it always find the second
+	 *
+	 * @return integer|boolean id of current itemtype (or false if not found)
+	 */
+	private function getId()
+	{
 
 		$id            = isset($this->url_elements[1]) && is_numeric($this->url_elements[1])
-						 ?intval($this->url_elements[1])
-						 :false;
+			? intval($this->url_elements[1])
+			: false;
 		$additional_id = isset($this->url_elements[3]) && is_numeric($this->url_elements[3])
-						 ?intval($this->url_elements[3])
-						 :false;
-  
+			? intval($this->url_elements[3])
+			: false;
+
 		if ($additional_id || isset($this->parameters['parent_itemtype'])) {
-		   $this->parameters['parent_id'] = $id;
-		   $id = $additional_id;
+			$this->parameters['parent_id'] = $id;
+			$id = $additional_id;
 		}
-  
+
 		return $id;
-	 }
+	}
 
 
 
-	private function pluginActivated(){
+	private function pluginActivated()
+	{
 
-		$plugin=new Plugin();
+		$plugin = new Plugin();
 
 		if (!$plugin->isActivated('gappessentials')) {
 			$this->returnError("Plugin disabled", 400, "ERROR_PLUGIN_DISABLED");
@@ -355,26 +391,27 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 	/**
-   * List of API ressources for which a valid session isn't required
-   *
-   * @return array
-   */
+	 * List of API ressources for which a valid session isn't required
+	 *
+	 * @return array
+	 */
 	protected function getRessourcesAllowedWithoutSession(): array
 	{
 		return [];
 	}
-	
+
 	/**
-	* List of API ressources that may write php session data
-	*
-	* @return array
-	*/
+	 * List of API ressources that may write php session data
+	 *
+	 * @return array
+	 */
 	protected function getRessourcesWithSessionWrite(): array
 	{
 		return [];
-	} 
+	}
 
-	public function call() {
+	public function call()
+	{
 
 		$this->request_uri  = $_SERVER['REQUEST_URI'];
 		$this->verb         = $_SERVER['REQUEST_METHOD'];
@@ -417,7 +454,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		if (in_array($resource, $this->getRessourcesWithSessionWrite())) {
 			$this->session_write = true;
 		}
-		
+
 		// Check API session unless blacklisted (init session, ...)
 		if (!$is_inline_doc && !in_array($resource, $this->getRessourcesAllowedWithoutSession())) {
 			$this->initEndpoint(true, $resource);
@@ -428,67 +465,69 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		switch ($resource) {
 			case 'pluginList':
 				return $this->returnResponse($this->pluginList($this->parameters));
-			break;
+				break;
 			case 'documentsTicket':
 				return $this->returnResponse($this->documentsTicket($this->parameters));
-			break;
+				break;
 			case 'basicInfo':
 				return $this->returnResponse($this->basicInfo($this->parameters));
-			break;
+				break;
 			case 'itilCategory':
 				return $this->returnResponse($this->itilCategory($this->parameters));
-			break;
+				break;
 			case 'location':
 				return $this->returnResponse($this->location($this->parameters));
-			break;
+				break;
 			default:
 				$this->messageLostError();
-			break;
+				break;
 		}
 	}
 
 
-	public function returnResponse($response, $httpcode = 200, $additionalheaders = []) {
+	public function returnResponse($response, $httpcode = 200, $additionalheaders = [])
+	{
 
 		if (empty($httpcode)) {
-		   $httpcode = 200;
+			$httpcode = 200;
 		}
-  
+
 		foreach ($additionalheaders as $key => $value) {
-		   header("$key: $value");
+			header("$key: $value");
 		}
-  
+
 		http_response_code($httpcode);
 		$this->header($this->debug);
-  
+
 		if ($response !== null) {
-		   $json = json_encode($response, JSON_UNESCAPED_UNICODE
-										| JSON_UNESCAPED_SLASHES
-										| JSON_NUMERIC_CHECK
-										| ($this->debug
-											? JSON_PRETTY_PRINT
-											: 0));
+			$json = json_encode($response, JSON_UNESCAPED_UNICODE
+				| JSON_UNESCAPED_SLASHES
+				| JSON_NUMERIC_CHECK
+				| ($this->debug
+					? JSON_PRETTY_PRINT
+					: 0));
 		} else {
-		   $json = '';
+			$json = '';
 		}
-  
+
 		if ($this->debug) {
-		   echo "<pre>";
-		   var_dump($response);
-		   echo "</pre>";
+			echo "<pre>";
+			var_dump($response);
+			echo "</pre>";
 		} else {
-		   echo $json;
+			echo $json;
 		}
 		exit;
-	 }
+	}
 
 
-	protected function documentsTicket($params=[]){
+	protected function documentsTicket($params = [])
+	{
 		global $DB;
 
-		$ID=Session::getLoginUserID();
-		$ticket_id=$this->getId();
-		$ticket=new Ticket();
+		$ID = Session::getLoginUserID();
+		$ticket_id = $this->getId();
+		$ticket = new Ticket();
 
 		if (!$ticket->getFromDB($ticket_id)) {
 			return $this->messageNotfoundError();
@@ -500,7 +539,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 			$params['add_keys_names'] = [];
 		}
 		$fields = [];
-		$document=new Document();
+		$document = new Document();
 		$document_item_obj = new Document_Item();
 		$document_items = $document_item_obj->find([
 			$ticket->getAssociatedDocumentsCriteria(),
@@ -508,7 +547,7 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 		]);
 		foreach ($document_items as $document_item) {
 			$document->getFromDB($document_item['documents_id']);
-			$file = GLPI_DOC_DIR."/".$document->fields['filepath'];
+			$file = GLPI_DOC_DIR . "/" . $document->fields['filepath'];
 			$data = $document->fields;
 			$data['filesize']  = filesize($file);
 			$data['date_mod']  = $document_item['date_mod'];
@@ -534,41 +573,44 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 
 
-	protected function pluginList($params=[]){
+	protected function pluginList($params = [])
+	{
 
 		$plugin = new Plugin();
 		return $plugin->getList();
 	}
 
 
-	protected function basicInfo($params=[]){
+	protected function basicInfo($params = [])
+	{
 		global $DB;
 
-		$info=[];
-		$info['documenttype']=[];
+		$info = [];
+		$info['documenttype'] = [];
 
-		$info['max_size']=Toolbox::return_bytes_from_ini_vars(ini_get("upload_max_filesize"));
-		
-		$sql=[
-			'SELECT'=>[
+		$info['max_size'] = Toolbox::return_bytes_from_ini_vars(ini_get("upload_max_filesize"));
+
+		$sql = [
+			'SELECT' => [
 				'name',
 				'ext',
 				'mime'
 			],
-			'FROM'=>'glpi_documenttypes',
-			'WHERE'=>[
-				'is_uploadable'=>1
+			'FROM' => 'glpi_documenttypes',
+			'WHERE' => [
+				'is_uploadable' => 1
 			]
 		];
 		$iterator = $DB->request($sql);
 		foreach ($iterator as $data) {
 			$info['documenttype'][] = $data;
 		}
-		
+
 		return $info;
 	}
 
-	protected function itilCategory($params=[]) {
+	protected function itilCategory($params = [])
+	{
 		global $DB;
 
 		$info = [];
@@ -608,7 +650,8 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 	}
 
 
-	protected function location($params=[]) {
+	protected function location($params = [])
+	{
 		global $DB;
 
 		$info = [];
@@ -632,6 +675,4 @@ class PluginGappEssentialsApirest extends Glpi\Api\API {
 
 		return $info;
 	}
-
-
 }
