@@ -1,4 +1,11 @@
 # GappEssentials CHANGELOG
+
+## 2.1.2
+### Features
+- Return visibility of the category
+### Bugfixes
+- Fix use with non-compound name 
+
 ## 2.1.1
 ### Bugfixes
 - Fix include
