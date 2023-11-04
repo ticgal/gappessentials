@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png" alt="GappEssentials Logo" height="250px" width="250px" class="js-lazy-loaded">
 
 [![Twitter](https://img.shields.io/badge/Twitter-TICgal-blue.svg?style=flat-square)](https://twitter.com/ticgalcom)
-[![Web](https://img.shields.io/badge/Web-TICgal-blue.svg?style=flat-square)](https://tic.gal/en/project/gappessentials/)
+[![Web](https://img.shields.io/badge/Web-TICgal-blue.svg?style=flat-square)](https://tic.gal/gapp)
 
 **Please report Gapp (Mobile GLPI app) related issues at: https://github.com/ticgal/gapp**
 
