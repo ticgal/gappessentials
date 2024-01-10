@@ -475,6 +475,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 			case 'location':
 				return $this->returnResponse($this->location($this->parameters));
 				break;
+			case 'defaultConfig':
+				return $this->returnResponse($this->defaultConfig($this->parameters));
+				break;
 			default:
 				$this->messageLostError();
 				break;
@@ -671,5 +674,16 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 		}
 
 		return $info;
+	}
+
+	protected function defaultConfig($params = [])
+	{
+
+		$config = new PluginGappessentialsConfig();
+		$config->getFromDB(1);
+
+		$data = $config->fields;
+
+		return $data;
 	}
 }

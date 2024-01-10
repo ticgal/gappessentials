@@ -44,6 +44,11 @@ function plugin_init_gappessentials()
    global $PLUGIN_HOOKS;
 
    $PLUGIN_HOOKS['csrf_compliant']['gappessentials'] = true;
+   $plugin = new Plugin();
+	if ($plugin->isActivated('gappessentials')) {
+      Plugin::registerClass('PluginGappessentialsConfig', ['addtabon' => 'Config']);
+      $PLUGIN_HOOKS['config_page']['gappessentials'] = 'front/config.form.php';
+   }
 }
 
 /**
