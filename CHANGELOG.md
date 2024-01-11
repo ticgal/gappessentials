@@ -1,5 +1,9 @@
 # GappEssentials CHANGELOG
 
+## 2.1.3
+### Features
+- Config for request source
+
 ## 2.1.2
 ### Features
 - Return visibility of the category
