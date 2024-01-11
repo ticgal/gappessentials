@@ -59,7 +59,7 @@ class PluginGappessentialsConfig extends CommonDBTM
 
 	static function getTypeName($nb = 0)
 	{
-		return __("Gapp configuration", "gappessentials");
+		return "Gapp Essentials";
 	}
 
 	static function getInstance()
