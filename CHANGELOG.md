@@ -1,6 +1,6 @@
 # GappEssentials CHANGELOG
 
-## 2.1.3
+## 2.2.0
 ### Features
 - Config for request source
 
