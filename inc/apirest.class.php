@@ -466,6 +466,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 			case 'documentsTicket':
 				return $this->returnResponse($this->documentsTicket($this->parameters));
 				break;
+			case 'getDocuments':
+				return $this->returnResponse($this->getDocuments($this->parameters));
+				break;
 			case 'basicInfo':
 				return $this->returnResponse($this->basicInfo($this->parameters));
 				break;
@@ -571,7 +574,59 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 		return $fields;
 	}
 
+	protected function getDocuments($params = [])
+	{
 
+		if (!isset($params['itemtype'])) {
+			$this->returnError();
+		}
+		if (!class_exists($params['itemtype']) || !is_subclass_of($params['itemtype'], 'CommonDBTM')) {
+			$this->returnError(__("resource not found or not an instance of CommonDBTM"), 400, "ERROR_RESOURCE_NOT_FOUND_NOR_COMMONDBTM");
+		}
+		$item_id = $this->getId();
+		$item = new $params['itemtype']();
+
+		if (!$item->getFromDB($item_id)) {
+			return $this->messageNotfoundError();
+		}
+		if (!$item->can($item_id, READ)) {
+			return $this->messageRightError();
+		}
+		if (!isset($params['add_keys_names'])) {
+			$params['add_keys_names'] = [];
+		}
+		$fields = [];
+		$document = new Document();
+		$document_item_obj = new Document_Item();
+		$document_items = $document_item_obj->find([
+			$item->getAssociatedDocumentsCriteria(),
+			'timeline_position'  => ['>', CommonITILObject::NO_TIMELINE]
+		]);
+		foreach ($document_items as $document_item) {
+			$document->getFromDB($document_item['documents_id']);
+			$file = GLPI_DOC_DIR . "/" . $document->fields['filepath'];
+			$data = $document->fields;
+			$data['filesize']  = filesize($file);
+			$data['date_mod']  = $document_item['date_mod'];
+			$data['users_id']  = $document_item['users_id'];
+			$data['timeline_position'] = $document_item['timeline_position'];
+			$data['items_id'] = $document_item['items_id'];
+			$data['itemtype'] = $document_item['itemtype'];
+			$data['parent_id'] = $item_id;
+			if (count($params['add_keys_names']) > 0) {
+				$data["_keys_names"] = $this->getFriendlyNames(
+					$data,
+					$params,
+					$item->getType()
+				);
+			}
+			$fields[] = $data;
+		}
+
+		$fields = self::parseDropdowns($fields, $params);
+
+		return $fields;
+	}
 
 	protected function pluginList($params = [])
 	{
