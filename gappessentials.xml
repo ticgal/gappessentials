@@ -39,6 +39,11 @@
         <author>TICgal</author>
     </authors>
     <versions>
+	 <version>
+            <num>2.3.0</num>
+            <compatibility>^10.0.3</compatibility>
+            <download_url>https://github.com/ticgal/gappessentials/releases/download/2.3.0/glpi-gappessentials-2.3.0.tar.tgz</download_url>
+        </version>
         <version>
             <num>2.2.0</num>
             <compatibility>^10.0.3</compatibility>
