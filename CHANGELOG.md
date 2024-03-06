@@ -1,5 +1,9 @@
 # GappEssentials CHANGELOG
 
+## 2.3.0
+### Features
+- Endpoint get item documents
+
 ## 2.2.0
 ### Features
 - Config for request source
