@@ -27,22 +27,23 @@
  */
 
 use Glpi\Cache\CacheManager;
+use Glpi\Kernel\Kernel;
 
-define('GLPI_ROOT', substr(__DIR__, 0, (strpos(__DIR__, "marketplace") - 1)));
+define('GLPI_ROOT', dirname(__DIR__, 2));
+
+if (!defined('GLPI_CONFIG_DIR')) {
+    define('GLPI_CONFIG_DIR', GLPI_ROOT . '/config');
+}
+
 define('DO_NOT_CHECK_HTTP_REFERER', 1);
 ini_set('session.use_cookies', 0);
 
-include_once(GLPI_ROOT . "/inc/based_config.php");
+require_once GLPI_ROOT . '/vendor/autoload.php';     // Carga autoloader PSR-4
+require_once GLPI_ROOT . '/inc/includes.php';        // Bootstrap completo de GLPI
+
 include_once(GLPI_ROOT . "/marketplace/gappessentials/inc/apirest.class.php");
 
-// Init loggers
-$GLPI = new GLPI();
-$GLPI->initLogger();
-$GLPI->initErrorHandler();
-
-//init cache
-$cache_manager = new CacheManager();
-$GLPI_CACHE = $cache_manager->getCoreCacheInstance();
+global $GLPI_CACHE;  // Ya inicializado por includes.php
 
 $api = new PluginGappEssentialsApirest();
 $api->call();

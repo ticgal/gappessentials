@@ -27,10 +27,12 @@
  */
 
 include('../../../inc/includes.php');
+use Glpi\Exception\Http\NotFoundHttpException;
 
 $plugin = new Plugin();
 if (!$plugin->isInstalled('gappessentials') || !$plugin->isActivated('gappessentials')) {
-	Html::displayNotFoundError();
+
+	throw new NotFoundHttpException();
 }
 
 Session::checkRight('config', UPDATE);
