@@ -2,7 +2,7 @@
 /*
  -------------------------------------------------------------------------
  GappEssentials plugin for GLPI
- Copyright (C) 2019 by the TICgal
+ Copyright (C) 2026 by the TICGAL
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------

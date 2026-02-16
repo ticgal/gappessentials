@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------------------
 # make_release.sh
-# Copyright (C) 2019-2020 by TICgal 
+# Copyright (C) 2019-2026 by TICGAL
 # https://github.com/ticgal/gappessentials
 # -------------------------------------------------------------------------
 # LICENSE
