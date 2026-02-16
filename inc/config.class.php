@@ -138,7 +138,7 @@ class PluginGappessentialsConfig extends CommonDBTM
 				`requesttypes_id` int {$default_key_sign} NOT NULL default '0',
 				PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-			$DB->query($query) or die($DB->error());
+			$DB->doQuery($query) or die($DB->error());
 			$config->add([
 				'id' => 1,
 				'requesttypes_id' => 0,
