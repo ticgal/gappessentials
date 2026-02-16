@@ -42,22 +42,22 @@ class PluginGappessentialsConfig extends CommonDBTM
 		}
 	}
 
-	static function canCreate()
+	public static function canCreate(): bool
 	{
 		return Session::haveRight('config', UPDATE);
 	}
 
-	static function canView()
+	public static function canView(): bool
 	{
 		return Session::haveRight('config', READ);
 	}
 
-	static function canUpdate()
+	public static function canUpdate(): bool
 	{
 		return Session::haveRight('config', UPDATE);
 	}
 
-	static function getTypeName($nb = 0)
+	public static function getTypeName($nb = 0)
 	{
 		return "Gapp Essentials";
 	}
@@ -76,7 +76,7 @@ class PluginGappessentialsConfig extends CommonDBTM
 	static function getConfig($update = false)
 	{
 		static $config = null;
-		if (is_null(self::$config)) {
+		if (is_null($config)) {
 			$config = new self();
 		}
 		if ($update) {
