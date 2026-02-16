@@ -1,5 +1,15 @@
 # GappEssentials CHANGELOG
+## 3.0.0 -beta0 16/02/2024
+### Features
+- GLPI 11 Compatibility
+- Migrated to Symfony Kernel bootstrap system
+- Updated to PSR-4 autoloading architecture
 
+### Bugfixes
+- Fixed method signatures with proper type hints for canCreate(), canView() and canUpdate()
+- Fixed bug in getConfig() method using incorrect static variable
+- Replaced deprecated query() with doQuery() for DDL operations
+- Modernized hook.php using __DIR__ constant
 ## 2.3.0
 ### Features
 - Endpoint get item documents
