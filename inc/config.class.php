@@ -42,17 +42,17 @@ class PluginGappessentialsConfig extends CommonDBTM
 		}
 	}
 
-	static function canCreate()
+	static function canCreate(): bool
 	{
 		return Session::haveRight('config', UPDATE);
 	}
 
-	static function canView()
+	static function canView(): bool
 	{
 		return Session::haveRight('config', READ);
 	}
 
-	static function canUpdate()
+	static function canUpdate(): bool
 	{
 		return Session::haveRight('config', UPDATE);
 	}
@@ -138,7 +138,7 @@ class PluginGappessentialsConfig extends CommonDBTM
 				`requesttypes_id` int {$default_key_sign} NOT NULL default '0',
 				PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-			$DB->query($query) or die($DB->error());
+			$DB->doQuery($query);
 			$config->add([
 				'id' => 1,
 				'requesttypes_id' => 0,

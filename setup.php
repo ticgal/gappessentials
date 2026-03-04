@@ -28,10 +28,10 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_GAPPESSENTIALS_VERSION', '2.3.0');
+define('PLUGIN_GAPPESSENTIALS_VERSION', '3.0.0-beta4');
 // Minimal GLPI version, inclusive
-define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "10.0.3");
-define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "10.0.99");
+define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "11.0.3");
+define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "11.0.99");
 
 /**
  * Init hooks of the plugin.
@@ -72,32 +72,4 @@ function plugin_version_gappessentials()
          ]
       ]
    ];
-}
-
-/**
- * Check pre-requisites before install
- * OPTIONAL, but recommanded
- *
- * @return boolean
- */
-function plugin_gappessentials_check_prerequisites()
-{
-   $path = substr(Plugin::getPhpDir('gappessentials', false), 1, (strpos(Plugin::getPhpDir('gappessentials', false), "/", 1) - 1));
-   if ($path == "marketplace") {
-      return true;
-   }
-   echo __("Gapp Essentials must be installed via Marketplace", "gappessentials");
-   return false;
-}
-
-/**
- * Check configuration process
- *
- * @param boolean $verbose Whether to display message on failure. Defaults to false
- *
- * @return boolean
- */
-function plugin_gappessentials_check_config($verbose = false)
-{
-   return true;
 }
