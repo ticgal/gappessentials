@@ -1,10 +1,10 @@
 <root>
    <name>Gapp Essentials</name>
    <key>gappessentials</key>
-   <state>stable</state> <logo>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png</logo>
+   <state>beta</state> <logo>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png</logo>
    <description>
       <short>
-         <en>Gapp essentials is a mandatory plugin to enable extended functionalities on Gapp, a GLPI mobile app.</en>
+         <en>Gapp Essentials is a mandatory plugin to enable additional features on Gapp, a GLPI mobile app.</en>
       </short>
       <long>
          <en>Gapp Essentials is a mandatory plugin that enables advanced functionality in Gapp, the mobile application for GLPI. Beginning with Gapp 2, the Gapp Essentials plugin has become a prerequisite for the app's operation. We strongly recommend updating GLPI to safeguard against security vulnerabilities. The versions currently supported are: -10.0.3+ Currently enables: -Access to ticket documents -Plugins list to Self-service users -Max. uploadable file size -Allowed filetypes -Download file size</en>
@@ -15,9 +15,14 @@
    <issues>https://github.com/ticgal/gappessentials/issues</issues>
    <readme>https://github.com/ticgal/gappessentials/blob/master/README.md</readme>
    <authors>
-      <author>TICgal</author>
+      <author>TICGAL</author>
    </authors>
    <versions>
+      <version>
+         <num>3.0.0.beta.3</num>
+         <compatibility>~11.0.0</compatibility>
+         <download_url>https://github.com/ticgal/gappessentials/releases/download/3.0.0/glpi-gappessentials-3.0.0-beta.3.tar.bz2</download_url>
+      </version>
       <version>
          <num>2.3.0</num>
          <compatibility>^10.0.3</compatibility>
