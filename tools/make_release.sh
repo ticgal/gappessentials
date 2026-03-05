@@ -109,7 +109,7 @@ rm -rf screenshots
 
 echo "Creating tarball"
 cd ..
-tar czf "$PLUGINNAME-$RELEASE.tar.tgz" $PLUGINNAME
+tar czf "glpi-$PLUGINNAME-$RELEASE.tar.tgz" $PLUGINNAME
 
 cd $INIT_PWD;
 
