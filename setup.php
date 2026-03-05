@@ -2,7 +2,7 @@
 /*
  -------------------------------------------------------------------------
  GappEssentials plugin for GLPI
- Copyright (C) 2019 by the TICgal
+ Copyright (C) 2019 - 2026 by the TICGAL
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
@@ -24,14 +24,23 @@
  You should have received a copy of the GNU General Public License
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
+ * @package   gappessentials
+ * @author    the TICGAL team
+ * @copyright Copyright (C) 2019 - 2026 TICGAL team
+ * @license   AGPL License 3.0 or (at your option) any later version
+ *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ * @link      https://www.tic.gal
+ * @since     2019
+ * -------------------------------------------------------------------------
  */
 
 use Glpi\Plugin\Hooks;
 
 define('PLUGIN_GAPPESSENTIALS_VERSION', '3.0.0-beta4');
 // Minimal GLPI version, inclusive
-define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "11.0.3");
+define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "11.0.0");
 define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "11.0.99");
+define("PLUGIN_GAPPESSENTIALS_ICON", "fa-solid fa-e");
 
 /**
  * Init hooks of the plugin.
@@ -43,11 +52,10 @@ function plugin_init_gappessentials()
 {
    global $PLUGIN_HOOKS;
 
-   $PLUGIN_HOOKS['csrf_compliant']['gappessentials'] = true;
    $plugin = new Plugin();
 	if ($plugin->isActivated('gappessentials')) {
       Plugin::registerClass('PluginGappessentialsConfig', ['addtabon' => 'Config']);
-      $PLUGIN_HOOKS['config_page']['gappessentials'] = 'front/config.form.php';
+      $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['gappessentials'] = 'front/config.form.php';
    }
 }
 
@@ -62,7 +70,7 @@ function plugin_version_gappessentials()
    return [
       'name'           => 'Gapp Essentials',
       'version'        => PLUGIN_GAPPESSENTIALS_VERSION,
-      'author'         => '<a href="https://tic.gal">TICgal</a>',
+      'author'         => '<a href="https://tic.gal">TICGAL</a>',
       'license'        => 'AGPLv3+',
       'homepage'       => 'https://tic.gal/en/gappessentials/',
       'requirements'   => [

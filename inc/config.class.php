@@ -2,7 +2,7 @@
 /*
  -------------------------------------------------------------------------
  GappEssentials plugin for GLPI
- Copyright (C) 2019 by the TICgal
+ Copyright (C) 2019 - 2026 by the TICGAL
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
@@ -24,6 +24,14 @@
  You should have received a copy of the GNU General Public License
  along with GappEssentials. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
+ * @package   gappessentials
+ * @author    the TICGAL team
+ * @copyright Copyright (C) 2019 - 2026 TICGAL team
+ * @license   AGPL License 3.0 or (at your option) any later version
+ *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ * @link      https://www.tic.gal
+ * @since     2019
+ * -------------------------------------------------------------------------
  */
 
 if (!defined('GLPI_ROOT')) {
@@ -32,7 +40,9 @@ if (!defined('GLPI_ROOT')) {
 
 class PluginGappessentialsConfig extends CommonDBTM
 {
-	static private $_instance = null;
+    public static $rightname = 'config';
+
+    private static ?self $instance = null;
 
 	public function __construct()
 	{
@@ -62,28 +72,17 @@ class PluginGappessentialsConfig extends CommonDBTM
 		return "Gapp Essentials";
 	}
 
-	static function getInstance()
-	{
-		if (!isset(self::$_instance)) {
-			self::$_instance = new self();
-			if (!self::$_instance->getFromDB(1)) {
-				self::$_instance->getEmpty();
-			}
-		}
-		return self::$_instance;
-	}
+	public static function getInstance(int $n = 1)
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+            if (!self::$instance->getFromDB($n)) {
+                self::$instance->getEmpty();
+            }
+        }
 
-	static function getConfig($update = false)
-	{
-		static $config = null;
-		if (is_null(self::$config)) {
-			$config = new self();
-		}
-		if ($update) {
-			$config->getFromDB(1);
-		}
-		return $config;
-	}
+        return self::$instance;
+    }
 
 	static function showConfigForm()
 	{
@@ -108,7 +107,7 @@ class PluginGappessentialsConfig extends CommonDBTM
 	function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
 	{
 		if ($item->getType() == 'Config') {
-			return self::getTypeName();
+			return self::createTabEntry(self::getTypeName());
 		}
 		return '';
 	}
@@ -120,6 +119,11 @@ class PluginGappessentialsConfig extends CommonDBTM
 		}
 		return true;
 	}
+
+    public static function getIcon()
+    {
+        return PLUGIN_GAPPESSENTIALS_ICON;
+    }
 
 	static function install(Migration $migration)
 	{

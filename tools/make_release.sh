@@ -2,7 +2,7 @@
 #
 # -------------------------------------------------------------------------
 # make_release.sh
-# Copyright (C) 2019-2020 by TICgal 
+# Copyright (C) 2019 - 2026-2020 by TICGAL 
 # https://github.com/ticgal/gappessentials
 # -------------------------------------------------------------------------
 # LICENSE
@@ -23,8 +23,8 @@
 
 # --------------------------------------------------------------------------
 # @package   GappEssentials
-# @author    TICgal
-# @copyright Copyright (c) 2019-2020 TICgal
+# @author    TICGAL
+# @copyright Copyright (c) 2019-2020 TICGAL
 # @license   AGPL License 3.0 or (at your option) any later version
 #            http://www.gnu.org/licenses/agpl-3.0-standalone.html
 # @link      https://tic.gal
