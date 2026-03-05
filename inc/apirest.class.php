@@ -44,184 +44,197 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 	}
 
 	public function manageUploadedFiles()
-	{
-		foreach (array_keys($_FILES) as $filename) {
-			$rand_name = uniqid('', true);
-			foreach ($_FILES[$filename]['name'] as &$name) {
-				$name = $rand_name . $name;
-			}
-			$upload_result
-				= GLPIUploadHandler::uploadFiles([
-					'name'           => $filename,
-					'print_response' => false
-				]);
-			foreach ($upload_result as $uresult) {
-				$this->parameters['input']->_filename[] = $uresult[0]->name;
-				$this->parameters['input']->_prefix_filename[] = $uresult[0]->prefix;
-			}
-			$this->parameters['upload_result'][] = $upload_result;
-		}
-	}
+    {
+        foreach (array_keys($_FILES) as $filename) {
+            // Randomize files names
+            $rand_name = uniqid('', true);
+            if (is_array($_FILES[$filename]['name'])) {
+                // Input name was suffixed by `[]`. This results in each `$_FILES[$filename]` property being an array.
+                // e.g.
+                // [
+                //     'name' => [
+                //         0 => 'image.jpg',
+                //         1 => 'document.pdf',
+                //     ],
+                //     'type' => [
+                //         0 => 'image/jpeg',
+                //         1 => 'application/pdf',
+                //     ]
+                // ]
+                foreach ($_FILES[$filename]['name'] as &$name) {
+                    $name = $rand_name . $name;
+                }
+            } else {
+                // Input name was NOT suffixed by `[]`. This results in each `$_FILES[$filename]` property being a single entry.
+                // e.g.
+                // [
+                //     'name' => 'image.jpg',
+                //     'type' => 'image/jpeg',
+                // ]
+                $name = &$_FILES[$filename]['name'];
+                $name = $rand_name . $name;
+            }
+
+            $upload_result
+            = GLPIUploadHandler::uploadFiles(['name'           => $filename,
+                'print_response' => false,
+            ]);
+            foreach ($upload_result as $uresult) {
+                foreach ($uresult as $file_result) {
+                    $this->parameters['input']->_filename[]        = $file_result->name;
+                    $this->parameters['input']->_prefix_filename[] = $file_result->prefix;
+                }
+            }
+            $this->parameters['upload_result'][] = $upload_result;
+        }
+    }
 
 	public function parseIncomingParams($is_inline_doc = false)
 	{
 
-		$parameters = [];
+        $parameters = [];
 
-		// first of all, pull the GET vars
-		if (isset($_SERVER['QUERY_STRING'])) {
-			parse_str($_SERVER['QUERY_STRING'], $parameters);
-		}
+        // first of all, pull the GET vars
+        if (isset($_SERVER['QUERY_STRING'])) {
+            parse_str($_SERVER['QUERY_STRING'], $parameters);
+        }
 
-		// now how about PUT/POST bodies? These override what we got from GET
-		$body = trim($this->getHttpBody());
-		if (strlen($body) > 0 && $this->verb == "GET") {
-			// GET method requires an empty body
-			$this->returnError(
-				"GET Request should not have json payload (http body)",
-				400,
-				"ERROR_JSON_PAYLOAD_FORBIDDEN"
-			);
-		}
+        // now how about PUT/POST bodies? These override what we got from GET
+        $body = trim($this->getHttpBody());
+        if ($body !== '' && $this->verb == "GET") {
+            // GET method requires an empty body
+            $this->returnError(
+                "GET Request should not have json payload (http body)",
+                400,
+                "ERROR_JSON_PAYLOAD_FORBIDDEN"
+            );
+        }
 
-		$content_type = "";
-		if (isset($_SERVER['CONTENT_TYPE'])) {
-			$content_type = $_SERVER['CONTENT_TYPE'];
-		} else if (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
-			$content_type = $_SERVER['HTTP_CONTENT_TYPE'];
-		} else {
-			if (!$is_inline_doc) {
-				$content_type = "application/json";
-			}
-		}
+        $content_type = "";
+        if (isset($_SERVER['CONTENT_TYPE'])) {
+            $content_type = $_SERVER['CONTENT_TYPE'];
+        } elseif (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+            $content_type = $_SERVER['HTTP_CONTENT_TYPE'];
+        } else {
+            if (!$is_inline_doc) {
+                $content_type = "application/json";
+            }
+        }
 
-		if (strpos($content_type, "application/json") !== false) {
-			if ($body_params = json_decode($body)) {
-				foreach ($body_params as $param_name => $param_value) {
-					$parameters[$param_name] = $param_value;
-				}
-			} else if (strlen($body) > 0) {
-				$this->returnError(
-					"JSON payload seems not valid",
-					400,
-					"ERROR_JSON_PAYLOAD_INVALID",
-					false
-				);
-			}
-			$this->format = "json";
-		} else if (strpos($content_type, "multipart/form-data") !== false) {
-			if (count($_FILES) <= 0) {
-				// likely uploaded files is too big so $_REQUEST will be empty also.
-				// see http://us.php.net/manual/en/ini.core.php#ini.post-max-size
-				$this->returnError(
-					"The file seems too big",
-					400,
-					"ERROR_UPLOAD_FILE_TOO_BIG_POST_MAX_SIZE",
-					false
-				);
-			}
+        if (str_contains($content_type, "application/json")) {
+            try {
+                if ($body != '') {
+                    $body_params = json_decode($body);
+                    foreach ($body_params as $param_name => $param_value) {
+                        $parameters[$param_name] = $param_value;
+                    }
+                }
+            } catch (JsonException $e) {
+                $this->returnError(
+                    "JSON payload seems not valid",
+                    400,
+                    "ERROR_JSON_PAYLOAD_INVALID",
+                    false
+                );
+            }
+            $this->format = "json";
+        } elseif (str_contains($content_type, "multipart/form-data")) {
+            if (count($_FILES) <= 0) {
+                // likely uploaded files is too big so $_REQUEST will be empty also.
+                // see http://us.php.net/manual/en/ini.core.php#ini.post-max-size
+                $this->returnError(
+                    "The file seems too big",
+                    400,
+                    "ERROR_UPLOAD_FILE_TOO_BIG_POST_MAX_SIZE",
+                    false
+                );
+            }
 
-			// with this content_type, php://input is empty... (see http://php.net/manual/en/wrappers.php.php)
-			if (!$uploadManifest = json_decode($_REQUEST['uploadManifest'])) {
-				$this->returnError(
-					"JSON payload seems not valid",
-					400,
-					"ERROR_JSON_PAYLOAD_INVALID",
-					false
-				);
-			}
-			foreach ($uploadManifest as $field => $value) {
-				$parameters[$field] = $value;
-			}
-			$this->format = "json";
+            // with this content_type, php://input is empty... (see http://php.net/manual/en/wrappers.php.php)
+            try {
+                $uploadManifest = json_decode($_REQUEST['uploadManifest']);
+                foreach ($uploadManifest as $field => $value) {
+                    $parameters[$field] = $value;
+                }
+                $this->format = "json";
 
-			// move files into _tmp folder
-			$parameters['upload_result'] = [];
-			$parameters['input']->_filename = [];
-			$parameters['input']->_prefix_filename = [];
-		} else if (strpos($content_type, "application/x-www-form-urlencoded") !== false) {
-			/** @var array $postvars */
-			parse_str($body, $postvars);
-			foreach ($postvars as $field => $value) {
-				$parameters[$field] = $value;
-			}
-			$this->format = "html";
-		} else {
-			$this->format = "html";
-		}
+                // move files into _tmp folder
+                $parameters['upload_result'] = [];
+                $parameters['input']->_filename = [];
+                $parameters['input']->_prefix_filename = [];
+            } catch (JsonException $e) {
+                $this->returnError(
+                    "JSON payload seems not valid",
+                    400,
+                    "ERROR_JSON_PAYLOAD_INVALID",
+                    false
+                );
+            }
+        } elseif (str_contains($content_type, "application/x-www-form-urlencoded")) {
+            parse_str($body, $postvars);
+            foreach ($postvars as $field => $value) {
+                // $parameters['input'] needs to be an object when process API Request
+                if ($field === 'input') {
+                    $value = (object) $value;
+                }
+                $parameters[$field] = $value;
+            }
+            $this->format = "html";
+        } else {
+            $this->format = "html";
+        }
 
-		// retrieve HTTP headers
-		$headers = [];
-		if (function_exists('getallheaders')) {
-			//apache specific
-			$headers = getallheaders();
-			if (false !== $headers && count($headers) > 0) {
-				$fixedHeaders = [];
-				foreach ($headers as $key => $value) {
-					$fixedHeaders[ucwords(strtolower($key), '-')] = $value;
-				}
-				$headers = $fixedHeaders;
-			}
-		} else {
-			// other servers
-			foreach ($_SERVER as $server_key => $server_value) {
-				if (substr($server_key, 0, 5) == 'HTTP_') {
-					$headers[str_replace(
-						' ',
-						'-',
-						ucwords(strtolower(str_replace(
-							'_',
-							' ',
-							substr($server_key, 5)
-						)))
-					)] = $server_value;
-				}
-			}
-		}
+        // retrieve HTTP headers
+        $headers = getallheaders();
+        if (count($headers) > 0) {
+            $fixedHeaders = [];
+            foreach ($headers as $key => $value) {
+                $fixedHeaders[ucwords(strtolower($key), '-')] = $value;
+            }
+            $headers = $fixedHeaders;
+        }
 
-		// try to retrieve basic auth
-		if (
-			isset($_SERVER['PHP_AUTH_USER'])
-			&& isset($_SERVER['PHP_AUTH_PW'])
-		) {
-			$parameters['login']    = $_SERVER['PHP_AUTH_USER'];
-			$parameters['password'] = $_SERVER['PHP_AUTH_PW'];
-		}
+        // try to retrieve basic auth
+        if (
+            isset($_SERVER['PHP_AUTH_USER'])
+            && isset($_SERVER['PHP_AUTH_PW'])
+        ) {
+            $parameters['login']    = $_SERVER['PHP_AUTH_USER'];
+            $parameters['password'] = $_SERVER['PHP_AUTH_PW'];
+        }
 
-		// try to retrieve user_token in header
-		if (
-			isset($headers['Authorization'])
-			&& (strpos($headers['Authorization'], 'user_token') !== false)
-		) {
-			$auth = explode(' ', $headers['Authorization']);
-			if (isset($auth[1])) {
-				$parameters['user_token'] = $auth[1];
-			}
-		}
+        // try to retrieve user_token in header
+        if (
+            isset($headers['Authorization'])
+            && (str_contains($headers['Authorization'], 'user_token'))
+        ) {
+            $auth = explode(' ', $headers['Authorization']);
+            if (isset($auth[1])) {
+                $parameters['user_token'] = $auth[1];
+            }
+        }
 
-		// try to retrieve session_token in header
-		if (isset($headers['Session-Token'])) {
-			$parameters['session_token'] = $headers['Session-Token'];
-		}
+        // try to retrieve session_token in header
+        if (isset($headers['Session-Token'])) {
+            $parameters['session_token'] = $headers['Session-Token'];
+        }
 
-		// try to retrieve app_token in header
-		if (isset($headers['App-Token'])) {
-			$parameters['app_token'] = $headers['App-Token'];
-		}
+        // try to retrieve app_token in header
+        if (isset($headers['App-Token'])) {
+            $parameters['app_token'] = $headers['App-Token'];
+        }
 
-		// check boolean parameters
-		foreach ($parameters as $key => &$parameter) {
-			if ($parameter === "true") {
-				$parameter = true;
-			}
-			if ($parameter === "false") {
-				$parameter = false;
-			}
-		}
+        // check boolean parameters
+        foreach ($parameters as $key => &$parameter) {
+            if ($parameter === "true") {
+                $parameter = true;
+            }
+            if ($parameter === "false") {
+                $parameter = false;
+            }
+        }
 
-		$this->parameters = $parameters;
-
-		return "";
+        $this->parameters = $parameters;
 	}
 
 	private function inputObjectToArray($input)
@@ -261,18 +274,28 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 	 */
 	private function checkAppToken()
 	{
+        // check app token (if needed)
+        if (!isset($this->parameters['app_token'])) {
+            $this->parameters['app_token'] = "";
+        }
 
-		// check app token (if needed)
-		if (!isset($this->parameters['app_token'])) {
-			$this->parameters['app_token'] = "";
-		}
-		if (!$this->apiclients_id = array_search($this->parameters['app_token'], $this->app_tokens)) {
-			if ($this->parameters['app_token'] != "") {
-				$this->returnError(__("parameter app_token seems wrong"), 400, "ERROR_WRONG_APP_TOKEN_PARAMETER");
-			} else {
-				$this->returnError(__("missing parameter app_token"), 400, "ERROR_APP_TOKEN_PARAMETERS_MISSING");
-			}
-		}
+        $token_id = array_search($this->parameters['app_token'], $this->app_tokens, true);
+
+        if ($token_id !== false) {
+            $this->apiclients_id = $token_id;
+        } elseif ($this->parameters['app_token'] != "") {
+            $this->returnError(
+                __("parameter app_token seems wrong"),
+                400,
+                "ERROR_WRONG_APP_TOKEN_PARAMETER"
+            );
+        } else {
+            $this->returnError(
+                __("missing parameter app_token"),
+                400,
+                "ERROR_APP_TOKEN_PARAMETERS_MISSING"
+            );
+        }
 	}
 
 
@@ -368,19 +391,19 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 	private function getId()
 	{
 
-		$id            = isset($this->url_elements[1]) && is_numeric($this->url_elements[1])
-			? intval($this->url_elements[1])
-			: false;
-		$additional_id = isset($this->url_elements[3]) && is_numeric($this->url_elements[3])
-			? intval($this->url_elements[3])
-			: false;
+        $id            = isset($this->url_elements[1]) && is_numeric($this->url_elements[1])
+                       ? intval($this->url_elements[1])
+                       : false;
+        $additional_id = isset($this->url_elements[3]) && is_numeric($this->url_elements[3])
+                       ? intval($this->url_elements[3])
+                       : false;
 
-		if ($additional_id || isset($this->parameters['parent_itemtype'])) {
-			$this->parameters['parent_id'] = $id;
-			$id = $additional_id;
-		}
+        if ($additional_id || isset($this->parameters['parent_itemtype'])) {
+            $this->parameters['parent_id'] = $id;
+            $id = $additional_id;
+        }
 
-		return $id;
+        return $id;
 	}
 
 
@@ -428,22 +451,18 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 		$is_inline_doc = (strlen($resource) == 0) || ($resource == "api");
 
 		// Add headers for CORS
-		$this->cors($this->verb);
+		$this->cors();
 
 		// retrieve paramaters (in body, query_string, headers)
 		$this->parseIncomingParams($is_inline_doc);
 
 		// show debug if required
 		if (isset($this->parameters['debug'])) {
-			$this->debug = $this->parameters['debug'];
-			if (empty($this->debug)) {
-				$this->debug = 1;
-			}
-
-			if ($this->debug >= 2) {
-				$this->showDebug();
-			}
-		}
+            $this->debug = $this->parameters['debug'];
+            if (empty($this->debug)) {
+                $this->debug = true;
+            }
+        }
 
 		// retrieve session (if exist)
 		$this->retrieveSession();
@@ -469,25 +488,25 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 
 		switch ($resource) {
 			case 'pluginList':
-				return $this->returnResponse($this->pluginList($this->parameters));
+				$this->returnResponse($this->pluginList($this->parameters));
 				break;
 			case 'documentsTicket':
-				return $this->returnResponse($this->documentsTicket($this->parameters));
+				$this->returnResponse($this->documentsTicket($this->parameters));
 				break;
 			case 'getDocuments':
-				return $this->returnResponse($this->getDocuments($this->parameters));
+				$this->returnResponse($this->getDocuments($this->parameters));
 				break;
 			case 'basicInfo':
-				return $this->returnResponse($this->basicInfo($this->parameters));
+				$this->returnResponse($this->basicInfo($this->parameters));
 				break;
 			case 'itilCategory':
-				return $this->returnResponse($this->itilCategory($this->parameters));
+				$this->returnResponse($this->itilCategory($this->parameters));
 				break;
 			case 'location':
-				return $this->returnResponse($this->location($this->parameters));
+				$this->returnResponse($this->location($this->parameters));
 				break;
 			case 'defaultConfig':
-				return $this->returnResponse($this->defaultConfig($this->parameters));
+				$this->returnResponse($this->defaultConfig($this->parameters));
 				break;
 			default:
 				$this->messageLostError();
@@ -521,14 +540,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 			$json = '';
 		}
 
-		if ($this->debug) {
-			echo "<pre>";
-			var_dump($response);
-			echo "</pre>";
-		} else {
-			echo $json;
-		}
-		exit;
+		echo $json;
+
+		exit();
 	}
 
 
@@ -541,10 +555,10 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 		$ticket = new Ticket();
 
 		if (!$ticket->getFromDB($ticket_id)) {
-			return $this->messageNotfoundError();
+			$this->messageNotfoundError();
 		}
 		if (!$ticket->can($ticket_id, READ)) {
-			return $this->messageRightError();
+			$this->messageRightError();
 		}
 		if (!isset($params['add_keys_names'])) {
 			$params['add_keys_names'] = [];
@@ -595,10 +609,10 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 		$item = new $params['itemtype']();
 
 		if (!$item->getFromDB($item_id)) {
-			return $this->messageNotfoundError();
+			$this->messageNotfoundError();
 		}
 		if (!$item->can($item_id, READ)) {
-			return $this->messageRightError();
+			$this->messageRightError();
 		}
 		if (!isset($params['add_keys_names'])) {
 			$params['add_keys_names'] = [];
