@@ -1,7 +1,7 @@
 <root>
    <name>Gapp Essentials</name>
    <key>gappessentials</key>
-   <state>unstable</state>
+   <state>stable</state>
    <logo>https://raw.githubusercontent.com/ticgal/gappessentials/multimedia/gappessentials.png</logo>
    <description>
       <short>
