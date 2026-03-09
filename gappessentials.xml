@@ -20,9 +20,9 @@
    </authors>
    <versions>
       <version>
-         <num>3.0.0.beta.3</num>
-         <compatibility>~11.0.0</compatibility>
-         <download_url>https://github.com/ticgal/gappessentials/releases/download/3.0.0/glpi-gappessentials-3.0.0-beta.3.tar.bz2</download_url>
+         <num>3.0.0.beta.4</num>
+         <compatibility>^11.0.0</compatibility>
+         <download_url>https://github.com/ticgal/gappessentials/releases/download/3.0.0-beta/glpi-gappessentials-3.0.0-beta4.tar.bz2</download_url>
       </version>
       <version>
          <num>2.3.0</num>
