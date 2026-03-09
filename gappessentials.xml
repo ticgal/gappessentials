@@ -12,7 +12,7 @@
             Gapp Essentials is a mandatory plugin that enables advanced functionality in Gapp, the mobile application for GLPI. 
             Beginning with Gapp 2, the Gapp Essentials plugin has become a prerequisite for the app's operation.
             We strongly recommend updating GLPI to safeguard against security vulnerabilities. 
-            The versions currently supported are: 11.0.0+ 
+            The versions currently supported are: 11.0.0 and above 
             Currently enables: 
             -Access to ticket documents 
             -Plugins list to Self-service users 
