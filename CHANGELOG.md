@@ -1,5 +1,10 @@
 # GappEssentials CHANGELOG
 
+## 3.0.0-beta4
+### Features
+- GLPI 11 Compatibility
+- Add Controller
+
 ## 2.3.0
 ### Features
 - Endpoint get item documents
