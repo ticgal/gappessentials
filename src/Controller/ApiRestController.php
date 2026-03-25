@@ -1,6 +1,8 @@
+<?php
+/*
  -------------------------------------------------------------------------
  GappEssentials plugin for GLPI
- Copyright (C) 2019 - 2026 by TICGAL.
+ Copyright (C) 2019 - 2026 by the TICGAL
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
@@ -30,3 +32,40 @@
  * @link      https://www.tic.gal
  * @since     2019
  * -------------------------------------------------------------------------
+ */
+namespace GlpiPlugin\Gappessentials\Controller;
+
+use Glpi\Controller\AbstractController;
+use Glpi\Http\HeaderlessStreamedResponse;
+use PluginGappEssentialsApirest;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Glpi\Http\Firewall;
+use Glpi\Security\Attribute\SecurityStrategy;
+use Plugin;
+
+include_once(Plugin::getPhpDir('gappessentials') . "/inc/apirest.class.php");
+
+final class ApiRestController extends AbstractController
+{
+
+    #[SecurityStrategy(Firewall::STRATEGY_NO_CHECK)]
+    #[Route(
+        "/apirest.php{request_parameters}",
+        name: "glpi_plugin_api_rest",
+        requirements: [
+            'request_parameters' => '.*',
+        ]
+    )]
+    public function __invoke(Request $request): Response
+    {
+        $_SERVER['PATH_INFO'] = $request->get('request_parameters');
+
+        // @phpstan-ignore-next-line method.deprecatedClass (refactoring is planned later)
+        return new HeaderlessStreamedResponse(function () {
+            $api = new PluginGappEssentialsApirest();
+            $api->call();
+        });
+    }
+}
