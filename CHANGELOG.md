@@ -1,6 +1,6 @@
 # GappEssentials CHANGELOG
 
-## 3.0.0-beta4
+## 3.0.0
 ### Features
 - GLPI 11 Compatibility
 - Add Controller
