@@ -1,5 +1,12 @@
 # GappEssentials CHANGELOG
 
+## 2.4.0
+### Bugfixes
+- Fix session token decryption in API header handling
+### Other
+- Update copyright year to 2026
+- Bump minimum GLPI version to 10.0.25
+
 ## 2.3.0
 ### Features
 - Endpoint get item documents
