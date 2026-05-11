@@ -2,7 +2,7 @@
 /*
  -------------------------------------------------------------------------
  GappEssentials plugin for GLPI
- Copyright (C) 2019 by the TICgal
+ Copyright (C) 2026 by the TICGAL
  https://tic.gal
  https://github.com/pluginsGLPI/gappessentials
  -------------------------------------------------------------------------
@@ -28,7 +28,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_GAPPESSENTIALS_VERSION', '2.4.0-beta');
+define('PLUGIN_GAPPESSENTIALS_VERSION', '2.4.0');
 // Minimal GLPI version, inclusive
 define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "10.0.25");
 define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "10.0.99");
