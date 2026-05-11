@@ -1,5 +1,9 @@
 # GappEssentials CHANGELOG
 
+## 3.1.0
+### Bugfixes
+- Fix session token decryption in API header handling
+
 ## 3.0.0
 ### Features
 - GLPI 11 Compatibility

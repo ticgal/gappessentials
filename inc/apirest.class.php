@@ -29,6 +29,8 @@
  * -------------------------------------------------------------------------
 */
 
+use Safe\Exceptions\UrlException;
+
 class PluginGappEssentialsApirest extends Glpi\Api\API
 {
 	protected $request_uri;
@@ -216,7 +218,12 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 
         // try to retrieve session_token in header
         if (isset($headers['Session-Token'])) {
-            $parameters['session_token'] = $headers['Session-Token'];
+            try {
+                $parameters['session_token'] = (new GLPIKey())->decrypt(base64_decode(trim($headers['Session-Token'])));
+            } catch (UrlException) {
+                // malformed session token, keep its raw value and let authentication code fail due to mismatch token
+                $parameters['session_token'] = $headers['Session-Token'];
+            }
         }
 
         // try to retrieve app_token in header
