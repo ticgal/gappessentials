@@ -598,13 +598,13 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 			return;
 		}
 
+		$document = new Document();
 
 		if (!$document->canViewFile($options)) {
 			$this->messageRightError();
 			return;
 		}
 
-		$document = new Document();
 		if (!$document->getFromDB($id)) {
 			$this->messageNotfoundError();
 			return;
