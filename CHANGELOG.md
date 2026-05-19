@@ -1,5 +1,6 @@
 # GappEssentials CHANGELOG
-
+## 2.5.0
+- Add a new method to get documents by API
 ## 2.4.0
 ### Bugfixes
 - Fix session token decryption in API header handling
