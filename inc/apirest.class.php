@@ -466,6 +466,9 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 			case 'documentsTicket':
 				return $this->returnResponse($this->documentsTicket($this->parameters));
 				break;
+			case 'getDocument':  
+                		$this->getDocument($this->parameters);  
+                		break;
 			case 'getDocuments':
 				return $this->returnResponse($this->getDocuments($this->parameters));
 				break;
@@ -573,7 +576,42 @@ class PluginGappEssentialsApirest extends Glpi\Api\API
 
 		return $fields;
 	}
+	protected function getDocument($params = []): void
+	{
+		$id = isset($params['docid']) ? (int) $params['docid'] : $this->getId();
 
+		if ($id === false || $id <= 0) {
+			$this->returnError(__("missing resource"), 400, "ERROR_RESOURCE_MISSING");
+			return;
+		}
+
+		$options = [];
+		if (isset($params['tickets_id'])) {
+			$options['tickets_id'] = (int) $params['tickets_id'];
+		} elseif (isset($params['itemtype']) && isset($params['items_id'])) {
+			$options['itemtype'] = $params['itemtype'];
+			$options['items_id'] = (int) $params['items_id'];
+		}
+
+		if (empty($options)) {
+			$this->returnError(__("Missing context parameters (tickets_id or itemtype/items_id)"), 400, "ERROR_MISSING_CONTEXT");
+			return;
+		}
+
+
+		if (!$document->canViewFile($options)) {
+			$this->messageRightError();
+			return;
+		}
+
+		$document = new Document();
+		if (!$document->getFromDB($id)) {
+			$this->messageNotfoundError();
+			return;
+		}
+		$document->send();
+		exit;
+	}
 	protected function getDocuments($params = [])
 	{
 
