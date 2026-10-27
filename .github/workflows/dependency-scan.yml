@@ -1,0 +1,22 @@
+name: Dependency Scan
+
+on:
+  workflow_dispatch:
+
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-scan:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    uses: TICGAL-Dev/.github-private/.github/workflows/web_dependency-scan.yml@v1

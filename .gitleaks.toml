@@ -1,0 +1,10 @@
+title = "gappessentials gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Vendored third-party binaries with high-entropy internal strings, not secrets"
+paths = [
+  '''tools/phpstan/phpstan\.phar''',
+]
