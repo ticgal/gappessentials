@@ -38,7 +38,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Gappessentials\Config;
 
-define('PLUGIN_GAPPESSENTIALS_VERSION', '3.2.1-beta1');
+define('PLUGIN_GAPPESSENTIALS_VERSION', '3.2.1');
 // Minimal GLPI version, inclusive
 define("PLUGIN_GAPPESSENTIALS_MIN_GLPI", "11.0.7");
 define("PLUGIN_GAPPESSENTIALS_MAX_GLPI", "11.0.99");
