@@ -1,0 +1,42 @@
+# GappEssentials Glpi Plugin.
+# Copyright (C) 2026 TICGAL
+# This file is distributed under the same license as the GappEssentials package.
+# TICGAL, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GappEssentials\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-27 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/Config.php:57
+msgid "Gapp Essentials"
+msgstr ""
+
+#: src/Config.php:70
+msgid "Request source"
+msgstr ""
+
+#: src/Api/Rest.php:49
+msgid "GappEssentials rest API"
+msgstr ""
+
+#: src/Api/Rest.php:63
+msgid "Uploads are not supported by this API"
+msgstr ""
+
+#: src/Api/Rest.php:261
+msgid "Unsupported itemtype: only Ticket, Change and Problem are allowed"
+msgstr ""
+
+#: src/Api/Rest.php:300
+msgid "Missing context parameters (tickets_id or itemtype/items_id)"
+msgstr ""

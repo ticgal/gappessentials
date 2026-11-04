@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset>
+    <file>.</file>
+    <exclude-pattern>/.git/</exclude-pattern>
+    <exclude-pattern type="relative">^node_modules/</exclude-pattern>
+    <exclude-pattern type="relative">^vendor/</exclude-pattern>
+
+    <arg name="colors" />
+    <arg name="extensions" value="php" />
+    <arg value="p" />
+    <arg name="warning-severity" value="0" />
+
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength" />
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+        <!-- post_addItem/post_updateItem/... are the exact override names required by CommonDBTM -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps" />
+        <!-- Conflicts with PHP-CS-Fixer's PER-CS2.0 style (empty bodies collapse to `{}`) -->
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine" />
+        <exclude name="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore" />
+    </rule>
+    <rule ref="Generic.Arrays.ArrayIndent"></rule>
+</ruleset>
